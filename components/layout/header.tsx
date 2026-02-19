@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/navigation-menu"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu } from "lucide-react"
+import { Menu, Globe, User, ChevronDown } from "lucide-react"
 import { Logo } from "@/components/icons/logo"
 
 const components: { title: string; href: string; description: string }[] = [
@@ -42,106 +42,66 @@ const components: { title: string; href: string; description: string }[] = [
 
 export function Header() {
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center">
-                <Link href="/" className="mr-8 flex items-center gap-2">
-                    <Logo className="h-8 w-8 text-primary" />
-                    <span className="hidden font-bold sm:inline-block text-xl">
-                        Perk
+        <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+                <Link href="/" className="flex items-center gap-2 mr-6">
+                    <Logo className="h-8 w-auto text-primary" />
+                    <span className="font-bold text-xl tracking-tight">
+                        perk
                     </span>
                 </Link>
-                <div className="hidden mr-4 md:flex">
-                    <NavigationMenu>
-                        <NavigationMenuList>
-                            <NavigationMenuItem>
-                                <NavigationMenuTrigger>Product</NavigationMenuTrigger>
-                                <NavigationMenuContent>
-                                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                                        <li className="row-span-3">
-                                            <NavigationMenuLink asChild>
-                                                <a
-                                                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted to-muted/50 p-6 no-underline outline-none focus:shadow-md"
-                                                    href="/"
-                                                >
-                                                    <Logo className="h-6 w-6 text-primary" />
-                                                    <div className="mb-2 mt-4 text-lg font-medium">
-                                                        Perk Platform
-                                                    </div>
-                                                    <p className="text-sm leading-tight text-muted-foreground">
-                                                        The all-in-one platform for modern business travel and spend.
-                                                    </p>
-                                                </a>
-                                            </NavigationMenuLink>
-                                        </li>
-                                        <ListItem href="/product/travel" title="Travel">
-                                            Global inventory and 24/7 support.
-                                        </ListItem>
-                                        <ListItem href="/product/expense" title="Expenses">
-                                            Automated reporting and reconciliation.
-                                        </ListItem>
-                                        <ListItem href="/product/cards" title="Cards">
-                                            Smart corporate cards with built-in controls.
-                                        </ListItem>
-                                    </ul>
-                                </NavigationMenuContent>
-                            </NavigationMenuItem>
-                            <NavigationMenuItem>
-                                <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
-                                <NavigationMenuContent>
-                                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                                        {components.map((component) => (
-                                            <ListItem
-                                                key={component.title}
-                                                title={component.title}
-                                                href={component.href}
-                                            >
-                                                {component.description}
-                                            </ListItem>
-                                        ))}
-                                    </ul>
-                                </NavigationMenuContent>
-                            </NavigationMenuItem>
-                            <NavigationMenuItem>
-                                <Link href="/pricing" legacyBehavior passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Pricing
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                            <NavigationMenuItem>
-                                <Link href="/customers" legacyBehavior passHref>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        Customers
-                                    </NavigationMenuLink>
-                                </Link>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                </div>
-                <div className="flex flex-1 items-center justify-end space-x-4">
-                    <nav className="flex items-center space-x-2">
-                        <Button variant="ghost" className="hidden sm:inline-flex">Log in</Button>
-                        <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6">Book a demo</Button>
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon" className="md:hidden">
-                                    <Menu className="h-5 w-5" />
-                                    <span className="sr-only">Toggle menu</span>
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right">
-                                <nav className="flex flex-col gap-4 mt-8">
-                                    <Link href="#" className="text-lg font-medium">Product</Link>
-                                    <Link href="#" className="text-lg font-medium">Solutions</Link>
-                                    <Link href="#" className="text-lg font-medium">Pricing</Link>
-                                    <Link href="#" className="text-lg font-medium">Customers</Link>
-                                    <div className="h-px bg-border my-2" />
-                                    <Link href="#" className="text-lg font-medium">Log in</Link>
-                                    <Button className="w-full bg-primary text-primary-foreground">Book a demo</Button>
-                                </nav>
-                            </SheetContent>
-                        </Sheet>
-                    </nav>
+
+                {/* Desktop Navigation */}
+                <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-medium">
+                    <Link href="#" className="hover:text-primary transition-colors">Product</Link>
+                    <Link href="#" className="hover:text-primary transition-colors">Solutions</Link>
+                    <Link href="#" className="hover:text-primary transition-colors">Customers</Link>
+                    <Link href="#" className="hover:text-primary transition-colors">Pricing</Link>
+                    <Link href="#" className="hover:text-primary transition-colors">Integrations</Link>
+                </nav>
+
+                <div className="flex items-center gap-4">
+                    <div className="hidden md:flex items-center gap-2">
+                        <Button variant="ghost" size="icon" className="text-muted-foreground w-9 h-9">
+                            <Globe className="h-5 w-5" />
+                            <span className="sr-only">Language</span>
+                        </Button>
+                        <ChevronDown className="h-4 w-4 text-muted-foreground -ml-1 mr-1" />
+                    </div>
+
+                    <div className="hidden md:flex items-center gap-3">
+                        <Button className="bg-[#BAFF4C] text-black hover:bg-[#a3e63d] font-semibold rounded-full px-5 h-10">
+                            Book a demo
+                        </Button>
+                        <Button variant="outline" className="rounded-full px-5 h-10 border-foreground/20 hover:bg-muted font-medium">
+                            Get started
+                        </Button>
+                        <Button variant="ghost" size="icon" className="w-9 h-9">
+                            <User className="h-5 w-5" />
+                            <span className="sr-only">Account</span>
+                        </Button>
+                    </div>
+
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon" className="md:hidden -mr-2">
+                                <Menu className="h-6 w-6" />
+                                <span className="sr-only">Toggle menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right">
+                            <nav className="flex flex-col gap-4 mt-8">
+                                <Link href="#" className="text-lg font-medium">Product</Link>
+                                <Link href="#" className="text-lg font-medium">Solutions</Link>
+                                <Link href="#" className="text-lg font-medium">Customers</Link>
+                                <Link href="#" className="text-lg font-medium">Pricing</Link>
+                                <Link href="#" className="text-lg font-medium">Integrations</Link>
+                                <div className="h-px bg-border my-2" />
+                                <Button className="w-full bg-[#BAFF4C] text-black hover:bg-[#a3e63d] rounded-full">Book a demo</Button>
+                                <Button variant="outline" className="w-full rounded-full">Get started</Button>
+                            </nav>
+                        </SheetContent>
+                    </Sheet>
                 </div>
             </div>
         </header>
