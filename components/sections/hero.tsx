@@ -9,7 +9,7 @@ export function Hero() {
             <div className="container px-4 md:px-6 relative flex flex-col items-center text-center">
 
                 {/* Headline & Subheadline */}
-                <div className="max-w-4xl space-y-8 mb-4 z-10">
+                <div className="max-w-4xl space-y-8 mb-0 z-10">
                     <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-[5.5rem] text-foreground leading-[1.05]">
                         The intelligent platform <br />
                         for travel and spend
@@ -17,7 +17,7 @@ export function Hero() {
                 </div>
 
                 {/* Hero Image Composition */}
-                <div className="relative w-full max-w-[1200px] mx-auto mt-4 h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px]">
+                <div className="relative w-full max-w-[1200px] mx-auto -mt-8 sm:-mt-12 md:-mt-20 h-[500px] sm:h-[600px] md:h-[700px] lg:h-[800px]">
                     {/* Main Phone Image - Centered */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[240px] sm:w-[280px] md:w-[320px] lg:w-[360px]">
                         <Image
