@@ -4,27 +4,19 @@ import Image from "next/image";
 
 export function Hero() {
     return (
-        <Section className="pt-20 pb-16 md:pt-32 md:pb-32 bg-[#F9F9F5] overflow-hidden">
+        <Section className="pt-10 pb-16 md:pt-16 md:pb-32 bg-[#F9F9F5] overflow-hidden">
             <div className="container px-4 md:px-6 relative flex flex-col items-center text-center">
 
                 {/* Headline & Subheadline */}
-                <div className="max-w-4xl space-y-8 mb-16 z-10">
-                    <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl text-foreground leading-[1.1]">
+                <div className="max-w-4xl space-y-8 mb-4 z-10">
+                    <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-[5.5rem] text-foreground leading-[1.05]">
                         The intelligent platform <br />
                         for travel and spend
                     </h1>
-                    <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                        <Button className="bg-[#BAFF4C] text-black hover:bg-[#a3e63d] font-semibold rounded-full px-8 h-14 text-lg">
-                            Book a demo
-                        </Button>
-                        <Button variant="outline" className="rounded-full px-8 h-14 text-lg border-foreground/20 hover:bg-muted font-medium bg-transparent">
-                            Get started
-                        </Button>
-                    </div>
                 </div>
 
                 {/* Hero Image Composition */}
-                <div className="relative w-full max-w-[1000px] mx-auto mt-8">
+                <div className="relative w-full max-w-[1000px] mx-auto mt-4">
                     {/* Main Phone Image */}
                     <div className="relative z-10 flex justify-center">
                         <Image
