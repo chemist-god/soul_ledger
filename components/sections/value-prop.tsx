@@ -1,12 +1,6 @@
 import { Section } from "@/components/ui/section";
 import { CheckCircle2 } from "lucide-react";
-
-const features = [
-    "Endless booking and rebooking",
-    "Uploading receipts manually",
-    "Chasing approvals",
-    "Reconciling messy data",
-];
+import { VALUE_PROP_ITEMS } from "@/lib/gen-variable";
 
 export function ValueProp() {
     return (
@@ -40,15 +34,15 @@ export function ValueProp() {
                         We call this <span className="text-red-500">shadow work</span>.
                     </h2>
                     <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed">
-                        Every company has it. It’s the work behind the work, slowing people
+                        Every company has it. It&apos;s the work behind the work, slowing people
                         down and costing companies more than they realize.
                     </p>
                     <ul className="grid gap-3">
-                        {features.map((feature) => (
-                            <li key={feature} className="flex items-center gap-2">
+                        {VALUE_PROP_ITEMS.map((item) => (
+                            <li key={item} className="flex items-center gap-2">
                                 <CheckCircle2 className="h-5 w-5 text-red-500" />
                                 <span className="text-muted-foreground line-through decoration-red-500/50 decoration-2">
-                                    {feature}
+                                    {item}
                                 </span>
                             </li>
                         ))}
