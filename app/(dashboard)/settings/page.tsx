@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { User, Bell, Lock, Shield, Settings2, HelpCircle, Eye, EyeOff, Smartphone, Laptop, Globe, MessageSquare, Copy, CheckCircle2, AlertTriangle, Key } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
+import { COLORS, USER, TOAST, API_CONFIG, LOCALE_DEFAULTS, MOCK_SESSIONS, FAQ_ITEMS } from "@/lib/gen-variable"
 
 export default function SettingsPage() {
     const [showKey, setShowKey] = useState(false);
