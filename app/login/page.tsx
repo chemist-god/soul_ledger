@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/icons/logo";
 import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { BRAND, COLORS, ROUTES, TOAST, IMAGES } from "@/lib/gen-variable";
 
 export default function LoginPage() {
     return (
