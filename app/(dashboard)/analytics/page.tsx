@@ -8,28 +8,13 @@ import { Calendar, Download, TrendingUp, TrendingDown, ArrowUpRight, BarChart3, 
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, PieChart, Pie, Cell } from "recharts"
+import { COLORS, MONTHLY_SPEND, CATEGORY_SPEND, MOCK_STATS, TOAST } from "@/lib/gen-variable"
 
-const monthlySpend = [
-    { name: "Jan", total: 45000 },
-    { name: "Feb", total: 52000 },
-    { name: "Mar", total: 48000 },
-    { name: "Apr", total: 61000 },
-    { name: "May", total: 59000 },
-    { name: "Jun", total: 68000 },
-    { name: "Jul", total: 65000 },
-]
-
-const categorySpend = [
-    { name: "Software", value: 35000, color: "#BAFF4C" },
-    { name: "Travel", value: 25000, color: "#111111" },
-    { name: "Meals", value: 15000, color: "#888888" },
-    { name: "Equipment", value: 12000, color: "#EEEEEE" },
-]
 
 export default function AnalyticsPage() {
     return (
         <div className="flex flex-col w-full min-h-screen">
-            <header className="flex h-16 shrink-0 items-center justify-between border-b border-black/5 px-4 sm:px-6 bg-[#F3F4ED] sticky top-0 z-20">
+            <header className={`flex h-16 shrink-0 items-center justify-between border-b border-black/5 px-4 sm:px-6 bg-[${COLORS.background}] sticky top-0 z-20`}>
                 <div className="flex items-center gap-2">
                     <SidebarTrigger className="-ml-2 text-black/70 hover:text-black hover:bg-black/5" />
                     <Separator orientation="vertical" className="mr-2 h-4 bg-black/10" />
@@ -47,7 +32,7 @@ export default function AnalyticsPage() {
                         Last 30 Days
                     </Button>
                     <Button
-                        onClick={() => toast("Exporting Report", { description: "Your analytics dashboard data is being compiled into a PDF." })}
+                        onClick={() => toast(TOAST.exportReport.title, { description: TOAST.exportReport.description })}
                         className="h-9 rounded-full bg-black text-white hover:bg-black/80 font-semibold flex items-center shadow-sm text-[13px] px-3 sm:px-4"
                     >
                         <Download className="sm:mr-2 h-4 w-4" /> <span className="hidden sm:inline">Export Report</span>
@@ -55,7 +40,7 @@ export default function AnalyticsPage() {
                 </div>
             </header>
 
-            <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-[#F3F4ED]">
+            <main className={`flex-1 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-[${COLORS.background}]`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black">Spend Analytics</h1>
@@ -70,18 +55,18 @@ export default function AnalyticsPage() {
                 {/* Top Metrics Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                     <Card className="rounded-3xl border-none shadow-sm bg-black text-white p-6 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
-                        <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-[#BAFF4C]/30 rounded-full blur-[50px] pointer-events-none" />
+                        <div className={`absolute top-[-20%] right-[-10%] w-32 h-32 bg-[${COLORS.primary}]/30 rounded-full blur-[50px] pointer-events-none`} />
                         <div className="relative z-10 flex justify-between items-start">
                             <span className="text-white/60 font-medium text-[14px]">Total Spend (MTD)</span>
                             <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md">
-                                <Activity className="h-4 w-4 text-[#BAFF4C]" />
+                                <Activity className={`h-4 w-4 text-[${COLORS.primary}]`} />
                             </div>
                         </div>
                         <div className="relative z-10 mt-4">
-                            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">$124,500</h2>
+                            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{MOCK_STATS.totalSpendMTD}</h2>
                             <div className="flex items-center gap-2 mt-2">
-                                <span className="flex items-center text-[#BAFF4C] font-semibold text-[13px] bg-[#BAFF4C]/10 px-2 py-0.5 rounded-md">
-                                    <TrendingUp className="mr-1 h-3 w-3" /> +12.5%
+                                <span className={`flex items-center text-[${COLORS.primary}] font-semibold text-[13px] bg-[${COLORS.primary}]/10 px-2 py-0.5 rounded-md`}>
+                                    <TrendingUp className="mr-1 h-3 w-3" /> {MOCK_STATS.totalSpendMTDChange}
                                 </span>
                                 <span className="text-white/40 text-[13px]">vs last month</span>
                             </div>
@@ -96,17 +81,17 @@ export default function AnalyticsPage() {
                             </div>
                         </div>
                         <div className="relative z-10 mt-4">
-                            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-black">$485.20</h2>
+                            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{MOCK_STATS.avgTransaction}</h2>
                             <div className="flex items-center gap-2 mt-2">
                                 <span className="flex items-center text-red-500 font-semibold text-[13px] bg-red-50 px-2 py-0.5 rounded-md">
-                                    <TrendingDown className="mr-1 h-3 w-3" /> -2.4%
+                                    <TrendingDown className="mr-1 h-3 w-3" /> {MOCK_STATS.avgTransactionChange}
                                 </span>
                                 <span className="text-black/40 text-[13px]">vs last month</span>
                             </div>
                         </div>
                     </Card>
 
-                    <Card className="rounded-3xl border-black/5 shadow-sm bg-[#BAFF4C] p-6 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
+                    <Card className={`rounded-3xl border-black/5 shadow-sm bg-[${COLORS.primary}] p-6 relative overflow-hidden flex flex-col justify-between min-h-[160px]`}>
                         <div className="relative z-10 flex justify-between items-start">
                             <span className="text-black/60 font-medium text-[14px]">Active Cards</span>
                             <div className="h-8 w-8 rounded-full bg-white/40 flex items-center justify-center">
@@ -114,10 +99,10 @@ export default function AnalyticsPage() {
                             </div>
                         </div>
                         <div className="relative z-10 mt-4">
-                            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-black">42</h2>
+                            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-black">{MOCK_STATS.activeCards}</h2>
                             <div className="flex items-center gap-2 mt-2">
                                 <span className="flex items-center text-black font-semibold text-[13px] bg-white/40 px-2 py-0.5 rounded-md">
-                                    <TrendingUp className="mr-1 h-3 w-3" /> +4
+                                    <TrendingUp className="mr-1 h-3 w-3" /> {MOCK_STATS.activeCardsChange}
                                 </span>
                                 <span className="text-black/50 text-[13px]">new this month</span>
                             </div>
@@ -141,11 +126,11 @@ export default function AnalyticsPage() {
                         <CardContent className="p-6">
                             <div className="h-[300px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={monthlySpend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                                    <AreaChart data={MONTHLY_SPEND} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                         <defs>
                                             <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#BAFF4C" stopOpacity={0.4} />
-                                                <stop offset="95%" stopColor="#BAFF4C" stopOpacity={0} />
+                                                <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.4} />
+                                                <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
                                         <XAxis
@@ -184,7 +169,7 @@ export default function AnalyticsPage() {
                                             strokeWidth={3}
                                             fillOpacity={1}
                                             fill="url(#colorTotal)"
-                                            activeDot={{ r: 6, fill: "#BAFF4C", stroke: "#111111", strokeWidth: 2 }}
+                                            activeDot={{ r: 6, fill: COLORS.primary, stroke: "#111111", strokeWidth: 2 }}
                                         />
                                     </AreaChart>
                                 </ResponsiveContainer>
@@ -203,7 +188,7 @@ export default function AnalyticsPage() {
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
                                         <Pie
-                                            data={categorySpend}
+                                            data={CATEGORY_SPEND}
                                             cx="50%"
                                             cy="50%"
                                             innerRadius={60}
@@ -212,7 +197,7 @@ export default function AnalyticsPage() {
                                             dataKey="value"
                                             stroke="none"
                                         >
-                                            {categorySpend.map((entry, index) => (
+                                            {CATEGORY_SPEND.map((entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={entry.color} />
                                             ))}
                                         </Pie>
@@ -233,12 +218,12 @@ export default function AnalyticsPage() {
                                 </ResponsiveContainer>
                                 <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                                     <span className="text-sm font-semibold text-black/50">Total</span>
-                                    <span className="text-xl font-bold text-black">$87k</span>
+                                    <span className="text-xl font-bold text-black">{MOCK_STATS.categorySpendTotal}</span>
                                 </div>
                             </div>
 
                             <div className="mt-8 space-y-3">
-                                {categorySpend.map((category, i) => (
+                                {CATEGORY_SPEND.map((category, i) => (
                                     <div key={i} className="flex items-center justify-between text-sm">
                                         <div className="flex items-center gap-2">
                                             <div className="w-3 h-3 rounded-md" style={{ backgroundColor: category.color }} />
