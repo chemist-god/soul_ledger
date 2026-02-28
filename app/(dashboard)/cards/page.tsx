@@ -6,6 +6,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/co
 import { Button } from "@/components/ui/button"
 import { Plus, CreditCard, Lock, Eye, AlertCircle, Settings, Snowflake, Unlock } from "lucide-react"
 import { toast } from "sonner"
+import { COLORS, USER, TOAST } from "@/lib/gen-variable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import {
@@ -18,7 +19,7 @@ import {
 export default function CardsPage() {
     return (
         <div className="flex flex-col w-full min-h-screen">
-            <header className="flex h-16 shrink-0 items-center justify-between border-b border-black/5 px-4 sm:px-6 bg-[#F3F4ED] sticky top-0 z-20">
+            <header className={`flex h-16 shrink-0 items-center justify-between border-b border-black/5 px-4 sm:px-6 bg-[${COLORS.background}] sticky top-0 z-20`}>
                 <div className="flex items-center gap-2">
                     <SidebarTrigger className="-ml-2 text-black/70 hover:text-black hover:bg-black/5" />
                     <Separator orientation="vertical" className="mr-2 h-4 bg-black/10" />
@@ -31,13 +32,13 @@ export default function CardsPage() {
                     </Breadcrumb>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <Button className="h-9 rounded-full bg-[#BAFF4C] text-black hover:bg-[#a3e63d] font-semibold flex items-center shadow-sm text-[13px] px-3 sm:px-4">
+                    <Button className={`h-9 rounded-full bg-[${COLORS.primary}] text-black hover:bg-[${COLORS.primaryHover}] font-semibold flex items-center shadow-sm text-[13px] px-3 sm:px-4`}>
                         <Plus className="sm:mr-2 h-4 w-4" /> <span className="hidden sm:inline">Issue Card</span>
                     </Button>
                 </div>
             </header>
 
-            <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-[#F3F4ED]">
+            <main className={`flex-1 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-[${COLORS.background}]`}>
                 <div className="flex flex-col gap-1">
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black">Your Cards</h1>
                     <p className="text-black/60 text-[14px] sm:text-[15px]">Manage your virtual and physical corporate cards.</p>
@@ -61,7 +62,7 @@ export default function CardsPage() {
                             <div className="flex flex-col gap-4">
                                 <div className="h-56 rounded-2xl bg-gradient-to-br from-gray-900 to-black p-6 flex flex-col justify-between text-white shadow-lg relative overflow-hidden group w-full max-w-sm mx-auto sm:max-w-none">
                                     <div className="absolute top-0 right-0 p-8 w-full h-full pointer-events-none overflow-hidden">
-                                        <div className="absolute top-[-20%] right-[-10%] w-48 h-48 bg-[#BAFF4C]/20 rounded-full blur-[80px]" />
+                                        <div className={`absolute top-[-20%] right-[-10%] w-48 h-48 bg-[${COLORS.primary}]/20 rounded-full blur-[80px]`} />
                                     </div>
                                     <div className="flex justify-between items-start z-10 w-full">
                                         <div className="flex items-center gap-2">
@@ -110,7 +111,7 @@ export default function CardsPage() {
                                         <div className="flex gap-2">
                                             <Button
                                                 variant="outline"
-                                                onClick={() => toast("Verification Required", { description: "Please enter your password or use Touch ID to reveal card numbers." })}
+                                                onClick={() => toast(TOAST.cardReveal.title, { description: TOAST.cardReveal.description })}
                                                 className="flex-1 h-9 rounded-lg border-black/10 text-black hover:bg-black/5 font-semibold text-[13px]"
                                             >
                                                 <Eye className="mr-2 h-4 w-4 text-black/50" /> Reveal Details
@@ -118,7 +119,7 @@ export default function CardsPage() {
                                             <Button
                                                 variant="outline"
                                                 size="icon"
-                                                onClick={() => toast("Card Settings", { description: "Opening configuration drawer..." })}
+                                                onClick={() => toast(TOAST.cardSettings.title, { description: TOAST.cardSettings.description })}
                                                 className="h-9 w-9 rounded-lg border-black/10 text-black hover:bg-black/5"
                                             >
                                                 <Settings className="h-4 w-4 text-black/50" />
@@ -130,7 +131,7 @@ export default function CardsPage() {
 
                             {/* Card Item 2 */}
                             <div className="flex flex-col gap-4">
-                                <div className="h-56 rounded-2xl bg-[#BAFF4C] p-6 flex flex-col justify-between text-black shadow-lg relative overflow-hidden group w-full max-w-sm mx-auto sm:max-w-none">
+                                <div className={`h-56 rounded-2xl bg-[${COLORS.primary}] p-6 flex flex-col justify-between text-black shadow-lg relative overflow-hidden group w-full max-w-sm mx-auto sm:max-w-none`}>
                                     <div className="absolute top-0 right-0 p-8 w-full h-full pointer-events-none overflow-hidden">
                                         <div className="absolute bottom-[-20%] left-[-10%] w-48 h-48 bg-white/40 rounded-full blur-[80px]" />
                                     </div>
@@ -151,7 +152,7 @@ export default function CardsPage() {
                                         <div className="flex justify-between items-end mt-4">
                                             <div className="flex flex-col">
                                                 <span className="text-[10px] text-black/50 uppercase tracking-widest font-semibold mb-1">Cardholder</span>
-                                                <span className="text-[14px] font-medium">Ana Torres</span>
+                                                <span className="text-[14px] font-medium">{USER.name}</span>
                                             </div>
                                             <div className="flex flex-col text-right">
                                                 <span className="text-[10px] text-black/50 uppercase tracking-widest font-semibold mb-1">CVC</span>
@@ -248,9 +249,9 @@ export default function CardsPage() {
                                         <div className="flex gap-2">
                                             <Button
                                                 variant="outline"
-                                                onClick={() => toast.success("Card Unlocked", {
-                                                    description: "This virtual card is now active and ready for transactions.",
-                                                    icon: <Unlock className="h-5 w-5 text-[#BAFF4C]" />
+                                                onClick={() => toast.success(TOAST.cardUnlocked.title, {
+                                                    description: TOAST.cardUnlocked.description,
+                                                    icon: <Unlock className={`h-5 w-5 text-[${COLORS.primary}]`} />
                                                 })}
                                                 className="flex-1 h-9 rounded-lg border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 font-semibold text-[13px] bg-red-50/50"
                                             >
@@ -266,8 +267,8 @@ export default function CardsPage() {
                     <TabsContent value="physical" className="mt-6">
                         <div className="flex flex-col items-center justify-center p-8 sm:p-16 text-center border-2 border-black/5 border-dashed rounded-3xl bg-white max-w-4xl mx-auto shadow-sm transition-all hover:border-black/10">
                             <div className="relative mb-6">
-                                <div className="absolute inset-0 bg-[#BAFF4C]/20 blur-2xl rounded-full" />
-                                <div className="h-20 w-20 bg-[#BAFF4C]/10 rounded-2xl flex items-center justify-center relative border border-[#BAFF4C]/20 text-[#BAFF4C]">
+                                <div className={`absolute inset-0 bg-[${COLORS.primary}]/20 blur-2xl rounded-full`} />
+                                <div className={`h-20 w-20 bg-[${COLORS.primary}]/10 rounded-2xl flex items-center justify-center relative border border-[${COLORS.primary}]/20 text-[${COLORS.primary}]`}>
                                     <CreditCard className="h-10 w-10 text-black/70" />
                                 </div>
                             </div>
@@ -276,11 +277,11 @@ export default function CardsPage() {
                                 You currently don't have any active physical corporate cards assigned to you. Request one below to start spending in-person.
                             </p>
                             <Button
-                                onClick={() => toast("Request Submitted", {
-                                    description: "Your physical card is being printed and will arrive in 3-5 business days.",
-                                    icon: <CreditCard className="h-5 w-5 text-[#BAFF4C]" />
+                                onClick={() => toast(TOAST.cardRequest.title, {
+                                    description: TOAST.cardRequest.description,
+                                    icon: <CreditCard className={`h-5 w-5 text-[${COLORS.primary}]`} />
                                 })}
-                                className="h-11 rounded-full bg-[#BAFF4C] text-black hover:bg-[#a3e63d] font-semibold shadow-sm text-[14px] px-8 transition-transform hover:scale-[1.02]"
+                                className={`h-11 rounded-full bg-[${COLORS.primary}] text-black hover:bg-[${COLORS.primaryHover}] font-semibold shadow-sm text-[14px] px-8 transition-transform hover:scale-[1.02]`}
                             >
                                 Request Physical Card
                             </Button>
