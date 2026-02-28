@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { FileDown, Search, Filter, SlidersHorizontal, ArrowDown, ArrowUp, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
+import { COLORS, MOCK_TRANSACTIONS, TX_CATEGORIES, TOAST } from "@/lib/gen-variable"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -18,21 +19,12 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-const transactions = [
-    { id: "TX-9982", merchant: "AWS Services", sub: "us-east-1", category: "Software", card: "Ana's Virtual ••4092", date: "Today, 10:24 AM", amount: "-$1,240.00", status: "cleared", img: "/images/img_4.jpeg" },
-    { id: "TX-9981", merchant: "Lyft", sub: "Ride to airport", category: "Travel", card: "Travel Card ••1842", date: "Yesterday, 3:45 PM", amount: "-$42.50", status: "pending", img: "/images/img_5.jpeg" },
-    { id: "TX-9980", merchant: "GitHub", sub: "Copilot seats", category: "Software", card: "Ana's Virtual ••4092", date: "Feb 19, 2026", amount: "-$240.00", status: "cleared", img: "/images/img_3.jpeg" },
-    { id: "TX-9979", merchant: "Sweetgreen", sub: "Team lunch", category: "Meals", card: "Office Card ••9911", date: "Feb 18, 2026", amount: "-$124.80", status: "cleared", img: "/images/img_2.jpeg" },
-    { id: "TX-9978", merchant: "Figma", sub: "Annual plan", category: "Software", card: "Ana's Virtual ••4092", date: "Feb 15, 2026", amount: "-$1,800.00", status: "cleared", img: "/images/img_6.jpeg" },
-    { id: "TX-9977", merchant: "WeWork", sub: "Monthly lease", category: "Office", card: "Office Card ••9911", date: "Feb 14, 2026", amount: "-$4,500.00", status: "cleared", img: "/images/img_2.jpeg" },
-    { id: "TX-9976", merchant: "Delta Airlines", sub: "Flight to SF", category: "Travel", card: "Travel Card ••1842", date: "Feb 12, 2026", amount: "-$650.00", status: "cleared", img: "/images/img_3.jpeg" },
-    { id: "TX-9975", merchant: "Stripe", sub: "Payment gateway fee", category: "Finance", card: "Ana's Virtual ••4092", date: "Feb 10, 2026", amount: "-$85.50", status: "cleared", img: "/images/img_4.jpeg" },
-]
+const transactions = MOCK_TRANSACTIONS
 
 export default function TransactionsPage() {
     return (
         <div className="flex flex-col w-full min-h-screen">
-            <header className="flex h-16 shrink-0 items-center justify-between border-b border-black/5 px-6 bg-[#F3F4ED] sticky top-0 z-20">
+            <header className={`flex h-16 shrink-0 items-center justify-between border-b border-black/5 px-6 bg-[${COLORS.background}] sticky top-0 z-20`}>
                 <div className="flex items-center gap-2">
                     <SidebarTrigger className="-ml-2 text-black/70 hover:text-black hover:bg-black/5" />
                     <Separator orientation="vertical" className="mr-2 h-4 bg-black/10" />
@@ -47,9 +39,9 @@ export default function TransactionsPage() {
                 <div className="flex items-center gap-3">
                     <Button
                         variant="outline"
-                        onClick={() => toast("Export Started", {
-                            description: "Your CSV is generating and will download shortly.",
-                            icon: <FileDown className="h-5 w-5 text-[#BAFF4C]" />
+                        onClick={() => toast(TOAST.exportStarted.title, {
+                            description: TOAST.exportStarted.description,
+                            icon: <FileDown className={`h-5 w-5 text-[${COLORS.primary}]`} />
                         })}
                         className="h-9 rounded-full border-black/10 text-black hover:bg-black/5 bg-transparent text-[13px] font-semibold"
                     >
@@ -59,7 +51,7 @@ export default function TransactionsPage() {
                 </div>
             </header>
 
-            <main className="flex-1 p-6 md:p-8 space-y-6 bg-[#F3F4ED]">
+            <main className={`flex-1 p-6 md:p-8 space-y-6 bg-[${COLORS.background}]`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-black">Company Transactions</h1>
@@ -71,7 +63,7 @@ export default function TransactionsPage() {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/40" />
                             <Input
                                 placeholder="Search merchant..."
-                                className="h-9 w-[200px] lg:w-[300px] pl-9 rounded-full bg-white border-black/10 text-[13px] focus-visible:ring-[#BAFF4C]"
+                                className={`h-9 w-[200px] lg:w-[300px] pl-9 rounded-full bg-white border-black/10 text-[13px] focus-visible:ring-[${COLORS.primary}]`}
                             />
                         </div>
                         <Button variant="outline" size="icon" className="h-9 w-9 rounded-full border-black/10 bg-white hover:bg-black/5 shrink-0">
@@ -115,7 +107,7 @@ export default function TransactionsPage() {
                                             <div className="flex items-center gap-3">
                                                 <Avatar className="h-10 w-10 border border-black/5">
                                                     <AvatarImage src={tx.img} className="object-cover" />
-                                                    <AvatarFallback className="bg-[#BAFF4C] text-black text-[13px] font-bold">{tx.merchant.substring(0, 2)}</AvatarFallback>
+                                                    <AvatarFallback className={`bg-[${COLORS.primary}] text-black text-[13px] font-bold`}>{tx.merchant.substring(0, 2)}</AvatarFallback>
                                                 </Avatar>
                                                 <div className="flex flex-col">
                                                     <span className="text-[14px] font-semibold text-black">{tx.merchant}</span>
@@ -159,7 +151,7 @@ export default function TransactionsPage() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => toast("Fetching transactions", { description: "Loading the next page of results..." })}
+                            onClick={() => toast(TOAST.fetchTransactions.title, { description: TOAST.fetchTransactions.description })}
                             className="h-7 text-xs border-black/10"
                         >
                             Next
