@@ -1,5 +1,6 @@
 import { MainSidebar } from "@/components/layout/sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { COLORS } from "@/lib/gen-variable";
 
 export default function DashboardLayout({
     children,
@@ -9,7 +10,7 @@ export default function DashboardLayout({
     return (
         <SidebarProvider>
             <MainSidebar />
-            <SidebarInset className="bg-[#F3F4ED] min-h-screen">
+            <SidebarInset className={`bg-[${COLORS.background}] min-h-screen`}>
                 {children}
             </SidebarInset>
         </SidebarProvider>
