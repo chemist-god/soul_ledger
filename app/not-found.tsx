@@ -5,6 +5,7 @@ import { ArrowLeft, Home, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ROUTES, TOAST } from "@/lib/gen-variable";
 
 export default function NotFound() {
     const [mounted, setMounted] = useState(false);
