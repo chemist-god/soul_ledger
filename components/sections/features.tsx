@@ -8,45 +8,9 @@ import {
     ShieldCheck,
     Globe2,
 } from "lucide-react";
+import { FEATURES } from "@/lib/gen-variable";
 
-const features = [
-    {
-        title: "Global Travel Inventory",
-        description:
-            "Access the world's largest inventory of flights, hotels, trains, and cars.",
-        icon: Plane,
-    },
-    {
-        title: "Automated Expenses",
-        description:
-            "Receipts match to transactions automatically. No manual entry required.",
-        icon: Receipt,
-    },
-    {
-        title: "Corporate Cards",
-        description:
-            "Issue physical and virtual cards with built-in policy controls.",
-        icon: CreditCard,
-    },
-    {
-        title: "Policy & Approval",
-        description:
-            "Set granular policies and automate approvals to keep spend in check.",
-        icon: ShieldCheck,
-    },
-    {
-        title: "Group Events",
-        description:
-            "Plan and manage company offsites and team gatherings effortlessly.",
-        icon: Users,
-    },
-    {
-        title: "24/7 Support",
-        description:
-            "Real human support available in 15 seconds, anywhere in the world.",
-        icon: Globe2,
-    },
-];
+const icons = [Plane, Receipt, CreditCard, ShieldCheck, Users, Globe2];
 
 export function Features() {
     return (
@@ -61,22 +25,25 @@ export function Features() {
                 </p>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {features.map((feature) => (
-                    <Card
-                        key={feature.title}
-                        className="flex flex-col items-start gap-4 p-8 transition-all hover:shadow-lg border-transparent hover:border-perk-green/20"
-                    >
-                        <div className="rounded-full bg-perk-green/10 p-4">
-                            <feature.icon className="h-6 w-6 text-perk-green" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <h3 className="text-xl font-bold">{feature.title}</h3>
-                            <p className="text-muted-foreground leading-relaxed">
-                                {feature.description}
-                            </p>
-                        </div>
-                    </Card>
-                ))}
+                {FEATURES.map((feature, i) => {
+                    const Icon = icons[i]
+                    return (
+                        <Card
+                            key={feature.title}
+                            className="flex flex-col items-start gap-4 p-8 transition-all hover:shadow-lg border-transparent hover:border-perk-green/20"
+                        >
+                            <div className="rounded-full bg-perk-green/10 p-4">
+                                <Icon className="h-6 w-6 text-perk-green" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <h3 className="text-xl font-bold">{feature.title}</h3>
+                                <p className="text-muted-foreground leading-relaxed">
+                                    {feature.description}
+                                </p>
+                            </div>
+                        </Card>
+                    )
+                })}
             </div>
         </Section>
     );
