@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import Image from "next/image";
 import { Clock, Star } from "lucide-react";
+import { IMAGES, MOCK_STATS } from "@/lib/gen-variable";
 
 export function Hero() {
     return (
@@ -21,7 +22,7 @@ export function Hero() {
                     {/* Main Phone Image - Centered */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[240px] sm:w-[280px] md:w-[320px] lg:w-[360px]">
                         <Image
-                            src="/images/img_1.png"
+                            src={IMAGES.heroPhone}
                             alt="Perk Platform Interface"
                             width={400}
                             height={800}
@@ -30,12 +31,10 @@ export function Hero() {
                         />
                     </div>
 
-                    {/* Floating Elements */}
-
                     {/* Top Left: Ana Torres */}
                     <div className="absolute top-[15%] left-[5%] md:left-[10%] lg:left-[18%] z-20 hidden sm:block animate-in fade-in zoom-in duration-700 delay-200">
                         <Image
-                            src="/images/img_3.jpeg"
+                            src={IMAGES.avatar}
                             alt="Ana Torres"
                             width={220}
                             height={80}
@@ -43,10 +42,10 @@ export function Hero() {
                         />
                     </div>
 
-                    {/* Mid Left (Mobile & Desktop): Expense submitted / Arriving on time */}
+                    {/* Mid Left: Expense submitted */}
                     <div className="absolute top-[35%] sm:top-[45%] left-[-2%] sm:left-[2%] md:left-[5%] lg:left-[12%] z-20 block animate-in fade-in zoom-in duration-700 delay-300">
                         <Image
-                            src="/images/img_4.jpeg"
+                            src={IMAGES.expenseSubmitted}
                             alt="Expense submitted"
                             width={180}
                             height={60}
@@ -57,7 +56,7 @@ export function Hero() {
                     {/* Bottom Left: Flight Ticket */}
                     <div className="absolute bottom-[15%] left-[5%] md:left-[8%] lg:left-[15%] z-20 hidden sm:block animate-in fade-in zoom-in duration-700 delay-400">
                         <Image
-                            src="/images/img_2.jpeg"
+                            src={IMAGES.flightTicket}
                             alt="Flight Ticket"
                             width={300}
                             height={160}
@@ -65,10 +64,10 @@ export function Hero() {
                         />
                     </div>
 
-                    {/* Right: Set the budget - Vertically centered */}
+                    {/* Right: Set the budget */}
                     <div className="absolute top-1/2 -translate-y-1/2 right-[2%] md:right-[5%] lg:right-[12%] z-0 hidden sm:block animate-in fade-in zoom-in duration-700 delay-500">
                         <Image
-                            src="/images/img_6.jpeg"
+                            src={IMAGES.setBudget}
                             alt="Set the budget"
                             width={340}
                             height={200}
@@ -76,10 +75,10 @@ export function Hero() {
                         />
                     </div>
 
-                    {/* Top Right (Mobile), Bottom Right (Desktop): Mark Adams */}
+                    {/* Mark Adams */}
                     <div className="absolute top-[5%] sm:top-auto sm:bottom-[10%] right-[-2%] sm:right-[8%] md:right-[12%] lg:right-[18%] z-20 block animate-in fade-in zoom-in duration-700 delay-600">
                         <Image
-                            src="/images/img_5.jpeg"
+                            src={IMAGES.markAdams}
                             alt="Mark Adams"
                             width={220}
                             height={80}
@@ -88,7 +87,7 @@ export function Hero() {
                     </div>
                 </div>
 
-                {/* Reviews / Trusted By - Bottom Right Absolute */}
+                {/* Reviews / Trusted By */}
                 <div className="absolute bottom-4 right-4 hidden md:flex items-center gap-3 text-sm">
                     <Clock className="w-5 h-5 text-foreground" />
                     <div className="flex items-center gap-1">
@@ -97,7 +96,7 @@ export function Hero() {
                         ))}
                     </div>
                     <div className="font-semibold text-foreground">
-                        4.6 <span className="mx-1 text-muted-foreground">|</span> 1,536 reviews
+                        {MOCK_STATS.heroRating} <span className="mx-1 text-muted-foreground">|</span> {MOCK_STATS.heroReviews} reviews
                     </div>
                 </div>
             </div>
