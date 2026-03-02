@@ -38,10 +38,10 @@ export function Header() {
 
                     <div className="hidden md:flex items-center gap-2 lg:gap-3">
                         <Button
-                            onClick={() => toast(TOAST.bookDemo.title, { description: TOAST.bookDemo.description })}
+                            onClick={() => toast(TOAST.getStarted.title, { description: TOAST.getStarted.description })}
                             className={`bg-[${COLORS.primary}] text-black hover:bg-[${COLORS.primaryHover}] font-semibold rounded-full px-5 h-10 text-[14px]`}
                         >
-                            Book a demo <ChevronRight className="ml-1 h-4 w-4" />
+                            Get started free <ChevronRight className="ml-1 h-4 w-4" />
                         </Button>
                         <Button
                             variant="outline"
@@ -102,10 +102,10 @@ export function Header() {
                                 {/* Mobile CTAs */}
                                 <div className="flex flex-col gap-3 pb-4">
                                     <Button
-                                        onClick={() => toast(TOAST.bookDemo.title, { description: TOAST.bookDemo.description })}
+                                        onClick={() => toast(TOAST.getStarted.title, { description: TOAST.getStarted.description })}
                                         className={`w-full h-12 bg-[${COLORS.primary}] text-black hover:bg-[${COLORS.primaryHover}] rounded-full font-semibold text-base shadow-sm`}
                                     >
-                                        Book a demo <ChevronRight className="ml-1 h-5 w-5" />
+                                        Get started free <ChevronRight className="ml-1 h-5 w-5" />
                                     </Button>
                                     <Button variant="outline" className={`w-full h-12 rounded-full border-black/20 text-black hover:bg-[${COLORS.primary}] hover:border-[${COLORS.primary}] hover:text-black font-semibold transition-colors text-base bg-transparent`} asChild>
                                         <Link href={ROUTES.getStarted}>
