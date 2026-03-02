@@ -5,11 +5,10 @@ import { Separator } from "@/components/ui/separator"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { FileDown, Search, Filter, SlidersHorizontal, ArrowDown, ArrowUp, CheckCircle2 } from "lucide-react"
+import { FileDown, Search, SlidersHorizontal, ArrowDown, Flame, CheckCircle2, XCircle, Clock } from "lucide-react"
 import { toast } from "sonner"
-import { COLORS, MOCK_TRANSACTIONS, TX_CATEGORIES, TOAST } from "@/lib/gen-variable"
+import { COLORS, MOCK_GOALS, TOAST } from "@/lib/gen-variable"
 import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
     Table,
     TableBody,
@@ -19,9 +18,48 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-const transactions = MOCK_TRANSACTIONS
+// Map goals → stake ledger entries
+const stakeEntries = MOCK_GOALS.map((goal) => ({
+    id: goal.id,
+    title: goal.title,
+    category: goal.category,
+    status: goal.status,
+    stake: goal.stake,
+    deadline: goal.deadline,
+    img: goal.img,
+    type:
+        goal.status === "completed"
+            ? ("returned" as const)
+            : goal.status === "failed"
+                ? ("forfeited" as const)
+                : ("locked" as const),
+}))
 
-export default function TransactionsPage() {
+const typeConfig = {
+    locked: {
+        label: "Locked In",
+        icon: Flame,
+        className: "text-blue-600 bg-blue-50 border-blue-200",
+        amountClass: "text-black",
+        prefix: "",
+    },
+    returned: {
+        label: "Returned",
+        icon: CheckCircle2,
+        className: "text-green-700 bg-green-50 border-green-200",
+        amountClass: "text-green-600",
+        prefix: "+",
+    },
+    forfeited: {
+        label: "Forfeited",
+        icon: XCircle,
+        className: "text-red-600 bg-red-50 border-red-200",
+        amountClass: "text-red-500",
+        prefix: "-",
+    },
+}
+
+export default function StakeLedgerPage() {
     return (
         <div className="flex flex-col w-full min-h-screen">
             <header className={`flex h-16 shrink-0 items-center justify-between border-b border-black/5 px-6 bg-[${COLORS.background}] sticky top-0 z-20`}>
@@ -31,7 +69,7 @@ export default function TransactionsPage() {
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem>
-                                <BreadcrumbPage className="text-black font-semibold text-[14px]">Transactions</BreadcrumbPage>
+                                <BreadcrumbPage className="text-black font-semibold text-[14px]">Stake Ledger</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
@@ -41,12 +79,12 @@ export default function TransactionsPage() {
                         variant="outline"
                         onClick={() => toast(TOAST.exportStarted.title, {
                             description: TOAST.exportStarted.description,
-                            icon: <FileDown className={`h-5 w-5 text-[${COLORS.primary}]`} />
+                            icon: <FileDown className={`h-5 w-5 text-[${COLORS.primary}]`} />,
                         })}
                         className="h-9 rounded-full border-black/10 text-black hover:bg-black/5 bg-transparent text-[13px] font-semibold"
                     >
                         <FileDown className="mr-2 h-4 w-4" />
-                        Export CSV
+                        Export
                     </Button>
                 </div>
             </header>
@@ -54,16 +92,15 @@ export default function TransactionsPage() {
             <main className={`flex-1 p-6 md:p-8 space-y-6 bg-[${COLORS.background}]`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-black">Company Transactions</h1>
-                        <p className="text-black/60 text-[14px] mt-1">Review and manage all corporate spending.</p>
+                        <h1 className="text-2xl font-bold tracking-tight text-black">Stake Ledger</h1>
+                        <p className="text-black/60 text-[14px] mt-1">A full history of all your staked goals and their outcomes.</p>
                     </div>
-
                     <div className="flex items-center gap-2">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/40" />
                             <Input
-                                placeholder="Search merchant..."
-                                className={`h-9 w-[200px] lg:w-[300px] pl-9 rounded-full bg-white border-black/10 text-[13px] focus-visible:ring-[${COLORS.primary}]`}
+                                placeholder="Search goals..."
+                                className={`h-9 w-[200px] lg:w-[280px] pl-9 rounded-full bg-white border-black/10 text-[13px] focus-visible:ring-[${COLORS.primary}]`}
                             />
                         </div>
                         <Button variant="outline" size="icon" className="h-9 w-9 rounded-full border-black/10 bg-white hover:bg-black/5 shrink-0">
@@ -72,15 +109,20 @@ export default function TransactionsPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                    <Button variant="secondary" className="h-8 rounded-full bg-black text-white hover:bg-black/80 text-xs px-4">All</Button>
-                    <Button variant="outline" className="h-8 rounded-full border-black/10 bg-white hover:bg-black/5 text-black text-xs px-4 border-dashed">Software</Button>
-                    <Button variant="outline" className="h-8 rounded-full border-black/10 bg-white hover:bg-black/5 text-black text-xs px-4 border-dashed">Travel</Button>
-                    <Button variant="outline" className="h-8 rounded-full border-black/10 bg-white hover:bg-black/5 text-black text-xs px-4 border-dashed">Meals</Button>
-                    <Button variant="outline" className="h-8 rounded-full border-black/10 bg-white hover:bg-black/5 text-black text-xs px-4 border-dashed">Office</Button>
-                    <Button variant="ghost" className="h-8 rounded-full hover:bg-transparent text-black/60 hover:text-black text-xs px-3">
-                        <Filter className="mr-2 h-3 w-3" /> More Filters
-                    </Button>
+                {/* Summary Cards */}
+                <div className="grid grid-cols-3 gap-4">
+                    <Card className="rounded-2xl border-black/5 shadow-sm bg-white p-4 flex flex-col gap-1">
+                        <p className="text-xs text-black/50 font-medium flex items-center gap-1.5"><Flame className={`h-3.5 w-3.5 text-[${COLORS.primary}]`} /> Total Locked</p>
+                        <p className="text-2xl font-bold text-black">$245.00</p>
+                    </Card>
+                    <Card className="rounded-2xl border-black/5 shadow-sm bg-white p-4 flex flex-col gap-1">
+                        <p className="text-xs text-black/50 font-medium flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> Total Returned</p>
+                        <p className="text-2xl font-bold text-green-600">+$40.00</p>
+                    </Card>
+                    <Card className="rounded-2xl border-black/5 shadow-sm bg-white p-4 flex flex-col gap-1">
+                        <p className="text-xs text-black/50 font-medium flex items-center gap-1.5"><XCircle className="h-3.5 w-3.5 text-red-400" /> Total Forfeited</p>
+                        <p className="text-2xl font-bold text-red-500">-$100.00</p>
+                    </Card>
                 </div>
 
                 <Card className="rounded-2xl border-black/5 shadow-sm bg-white overflow-hidden">
@@ -88,76 +130,53 @@ export default function TransactionsPage() {
                         <Table>
                             <TableHeader className="bg-black/[0.02]">
                                 <TableRow className="border-black/5 hover:bg-transparent">
-                                    <TableHead className="text-black/50 font-medium text-xs uppercase h-11 pl-6">Merchant</TableHead>
-                                    <TableHead className="text-black/50 font-medium text-xs uppercase hidden xl:table-cell h-11">Transaction ID</TableHead>
+                                    <TableHead className="text-black/50 font-medium text-xs uppercase h-11 pl-6">Goal</TableHead>
                                     <TableHead className="text-black/50 font-medium text-xs uppercase hidden md:table-cell h-11">Category</TableHead>
-                                    <TableHead className="text-black/50 font-medium text-xs uppercase hidden lg:table-cell h-11">Card Details</TableHead>
+                                    <TableHead className="text-black/50 font-medium text-xs uppercase hidden lg:table-cell h-11">Status</TableHead>
                                     <TableHead className="text-black/50 font-medium text-xs uppercase h-11">
                                         <div className="flex items-center gap-1 cursor-pointer hover:text-black/80">
-                                            Date <ArrowDown className="h-3 w-3" />
+                                            Deadline <ArrowDown className="h-3 w-3" />
                                         </div>
                                     </TableHead>
-                                    <TableHead className="text-right text-black/50 font-medium text-xs uppercase h-11 pr-6">Amount</TableHead>
+                                    <TableHead className="text-right text-black/50 font-medium text-xs uppercase h-11 pr-6">Stake</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {transactions.map((tx, i) => (
-                                    <TableRow key={i} className="border-black/5 py-4 cursor-pointer hover:bg-black/[0.03] transition-colors group">
-                                        <TableCell className="font-medium py-4 pl-6">
-                                            <div className="flex items-center gap-3">
-                                                <Avatar className="h-10 w-10 border border-black/5">
-                                                    <AvatarImage src={tx.img} className="object-cover" />
-                                                    <AvatarFallback className={`bg-[${COLORS.primary}] text-black text-[13px] font-bold`}>{tx.merchant.substring(0, 2)}</AvatarFallback>
-                                                </Avatar>
+                                {stakeEntries.map((entry) => {
+                                    const config = typeConfig[entry.type]
+                                    const Icon = config.icon
+                                    return (
+                                        <TableRow key={entry.id} className="border-black/5 cursor-pointer hover:bg-black/[0.03] transition-colors">
+                                            <TableCell className="font-medium py-4 pl-6">
                                                 <div className="flex flex-col">
-                                                    <span className="text-[14px] font-semibold text-black">{tx.merchant}</span>
-                                                    <span className="text-xs text-black/50 font-medium">{tx.sub}</span>
+                                                    <span className="text-[14px] font-semibold text-black">{entry.title}</span>
+                                                    <span className="text-xs text-black/50 font-mono">{entry.id}</span>
                                                 </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="hidden xl:table-cell py-4">
-                                            <span className="text-[13px] text-black/60 font-mono bg-black/5 px-2 py-0.5 rounded-md">{tx.id}</span>
-                                        </TableCell>
-                                        <TableCell className="hidden md:table-cell py-4">
-                                            <div className="inline-flex items-center rounded-full border border-black/10 px-2.5 py-0.5 text-xs font-medium text-black/70 bg-white whitespace-nowrap">
-                                                {tx.category}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="hidden lg:table-cell py-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-[13px] text-black/80">{tx.card}</span>
-                                                {tx.status === "pending" ? (
-                                                    <span className="text-[11px] font-semibold text-orange-500 flex items-center gap-1 mt-0.5"><div className="w-1.5 h-1.5 rounded-full bg-orange-500" /> Pending</span>
-                                                ) : (
-                                                    <span className="text-[11px] font-medium text-black/40 mt-0.5">Cleared</span>
-                                                )}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="text-[13px] text-black/60 py-4 whitespace-nowrap">{tx.date}</TableCell>
-                                        <TableCell className="text-right py-4 pr-6">
-                                            <span className="text-[14px] font-bold text-black">{tx.amount}</span>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                            </TableCell>
+                                            <TableCell className="hidden md:table-cell py-4">
+                                                <div className="inline-flex items-center rounded-full border border-black/10 px-2.5 py-0.5 text-xs font-medium text-black/70 bg-white whitespace-nowrap">
+                                                    {entry.category}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="hidden lg:table-cell py-4">
+                                                <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${config.className}`}>
+                                                    <Icon className="h-3 w-3" />
+                                                    {config.label}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell className="text-[13px] text-black/60 py-4 whitespace-nowrap">{entry.deadline}</TableCell>
+                                            <TableCell className="text-right py-4 pr-6">
+                                                <span className={`text-[14px] font-bold ${config.amountClass}`}>
+                                                    {config.prefix}{entry.stake}
+                                                </span>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })}
                             </TableBody>
                         </Table>
                     </CardContent>
                 </Card>
-
-                <div className="flex items-center justify-between text-xs text-black/50 pt-2 px-2">
-                    <span>Showing 1 to 8 of 24 entries</span>
-                    <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className="h-7 text-xs border-black/10" disabled>Previous</Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toast(TOAST.fetchTransactions.title, { description: TOAST.fetchTransactions.description })}
-                            className="h-7 text-xs border-black/10"
-                        >
-                            Next
-                        </Button>
-                    </div>
-                </div>
             </main>
         </div>
     )
