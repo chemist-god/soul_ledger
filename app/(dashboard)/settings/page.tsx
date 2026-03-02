@@ -9,10 +9,10 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { User, Bell, Lock, Shield, Settings2, HelpCircle, Eye, EyeOff, Smartphone, Laptop, Globe, MessageSquare, Copy, CheckCircle2, AlertTriangle, Key } from "lucide-react"
+import { User, Bell, Lock, Shield, Settings2, HelpCircle, Eye, EyeOff, Smartphone, Laptop, Globe, MessageSquare, Copy, CheckCircle2, AlertTriangle, Key, Sparkles } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
-import { COLORS, USER, TOAST, API_CONFIG, LOCALE_DEFAULTS, MOCK_SESSIONS, FAQ_ITEMS } from "@/lib/gen-variable"
+import { COLORS, USER, TOAST, API_CONFIG, LOCALE_DEFAULTS, MOCK_SESSIONS, FAQ_ITEMS, VERSION, RELEASES, BRAND } from "@/lib/gen-variable"
 
 export default function SettingsPage() {
     const [showKey, setShowKey] = useState(false);
@@ -62,6 +62,9 @@ export default function SettingsPage() {
                                 </TabsTrigger>
                                 <TabsTrigger value="support" className="md:w-full justify-start text-[14px] font-medium px-4 py-2.5 rounded-xl data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-black/5 border border-transparent text-black/60 hover:text-black hover:bg-black/5 transition-all">
                                     <HelpCircle className="mr-3 h-4 w-4 shrink-0" /> Help & Support
+                                </TabsTrigger>
+                                <TabsTrigger value="about" className="md:w-full justify-start text-[14px] font-medium px-4 py-2.5 rounded-xl data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-black/5 border border-transparent text-black/60 hover:text-black hover:bg-black/5 transition-all">
+                                    <Sparkles className="mr-3 h-4 w-4 shrink-0" /> About &amp; Updates
                                 </TabsTrigger>
                             </TabsList>
                         </div>
@@ -498,6 +501,131 @@ export default function SettingsPage() {
                                         </div>
                                     </CardContent>
                                 </Card>
+                            </TabsContent>
+
+                            {/* Tab 7: About & Updates */}
+                            <TabsContent value="about" className="m-0 space-y-6">
+
+                                {/* Version Hero Card */}
+                                <Card className="rounded-3xl border-black/5 shadow-sm bg-black text-white overflow-hidden relative">
+                                    <div className={`absolute -top-16 -right-16 w-64 h-64 bg-[${COLORS.primary}]/20 rounded-full blur-[80px] pointer-events-none`} />
+                                    <CardContent className="p-7 relative z-10">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${VERSION.channel === "stable"
+                                                        ? `bg-[${COLORS.primary}] text-black`
+                                                        : VERSION.channel === "beta"
+                                                            ? "bg-orange-400 text-white"
+                                                            : "bg-blue-400 text-white"
+                                                        }`}>
+                                                        {VERSION.channel}
+                                                    </span>
+                                                    <span className="text-white/40 text-sm">·</span>
+                                                    <span className="font-mono text-sm font-bold" style={{ color: COLORS.primary }}>
+                                                        v{VERSION.current}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-3xl font-bold tracking-tight">
+                                                        {BRAND.displayName}
+                                                        <span className="ml-3" style={{ color: COLORS.primary }}>&ldquo;{VERSION.codename}&rdquo;</span>
+                                                    </h2>
+                                                    <p className="text-white/50 text-[14px] mt-1.5">
+                                                        Released {VERSION.releaseDate}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-start sm:items-end gap-1 shrink-0">
+                                                <span className="text-white/40 text-xs uppercase tracking-wider font-medium">Current version</span>
+                                                <span className="font-mono text-5xl font-black leading-none" style={{ color: COLORS.primary }}>
+                                                    {VERSION.current}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Changelog Timeline */}
+                                <Card className="rounded-3xl border-black/5 shadow-sm bg-white">
+                                    <CardHeader className="border-b border-black/5 px-6 py-5 bg-black/[0.02]">
+                                        <CardTitle className="text-lg flex items-center gap-2">
+                                            <Sparkles className="h-5 w-5" style={{ color: COLORS.primary }} />
+                                            What&apos;s New
+                                        </CardTitle>
+                                        <CardDescription>
+                                            A full history of every release. Newest first.
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="p-6 space-y-0">
+                                        {RELEASES.map((release, i) => (
+                                            <div key={release.version} className="relative pl-8">
+                                                {i < RELEASES.length - 1 && (
+                                                    <div className="absolute left-[11px] top-8 bottom-0 w-px bg-black/8" />
+                                                )}
+                                                <div
+                                                    className="absolute left-0 top-1.5 h-[22px] w-[22px] rounded-full flex items-center justify-center"
+                                                    style={i === 0 ? { backgroundColor: COLORS.primary, boxShadow: `0 0 0 4px ${COLORS.primary}30` } : {}}
+                                                >
+                                                    {i !== 0 && <div className="h-[22px] w-[22px] rounded-full bg-black/8 border border-black/10 flex items-center justify-center"><div className="h-2 w-2 rounded-full bg-black/30" /></div>}
+                                                    {i === 0 && <div className="h-2 w-2 rounded-full bg-black" />}
+                                                </div>
+
+                                                <div className={`pb-8 ${i === 0 ? "" : "opacity-70"}`}>
+                                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3">
+                                                        <div className="flex items-center gap-2.5">
+                                                            <span className="font-mono text-[13px] font-bold text-black">
+                                                                v{release.version}
+                                                            </span>
+                                                            {i === 0 && (
+                                                                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full text-black" style={{ backgroundColor: COLORS.primary }}>
+                                                                    Latest
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-black/40 text-[12px] font-medium">
+                                                            {release.date}
+                                                        </span>
+                                                    </div>
+                                                    <h3 className="font-bold text-black text-[16px] mb-3">
+                                                        {release.title}
+                                                    </h3>
+                                                    <ul className="space-y-2">
+                                                        {release.notes.map((note, j) => (
+                                                            <li key={j} className="flex items-start gap-2.5 text-[13px] text-black/70">
+                                                                <CheckCircle2
+                                                                    className="h-4 w-4 mt-0.5 shrink-0"
+                                                                    style={{ color: i === 0 ? COLORS.primary : "rgba(0,0,0,0.3)" }}
+                                                                />
+                                                                {note}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </CardContent>
+                                </Card>
+
+                                {/* Feedback CTA */}
+                                <Card className="rounded-3xl shadow-none" style={{ borderColor: `${COLORS.primary}40`, backgroundColor: `${COLORS.primary}08` }}>
+                                    <CardContent className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                        <div className="space-y-1">
+                                            <p className="font-semibold text-black text-[15px]">Have feedback on this release?</p>
+                                            <p className="text-black/60 text-[13px]">We read every message. Help us make {BRAND.displayName} better.</p>
+                                        </div>
+                                        <button
+                                            onClick={() => toast(TOAST.supportTicket.title, { description: TOAST.supportTicket.description })}
+                                            className="shrink-0 h-9 px-5 rounded-full text-black text-[13px] font-bold transition-colors"
+                                            style={{ backgroundColor: COLORS.primary }}
+                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.primaryHover}
+                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = COLORS.primary}
+                                        >
+                                            Send Feedback
+                                        </button>
+                                    </CardContent>
+                                </Card>
+
                             </TabsContent>
 
                         </div>
