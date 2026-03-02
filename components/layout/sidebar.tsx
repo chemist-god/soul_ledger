@@ -39,7 +39,7 @@ import {
 import { Logo } from "@/components/icons/logo"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
-import { BRAND, COLORS, USER, NAV_MAIN, NAV_SETTINGS, ROUTES, TOAST } from "@/lib/gen-variable"
+import { BRAND, COLORS, USER, NAV_MAIN, NAV_SETTINGS, ROUTES, TOAST, VERSION } from "@/lib/gen-variable"
 
 export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname()
@@ -168,12 +168,6 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
                                             <span>Account Settings</span>
                                         </DropdownMenuItem>
                                     </Link>
-                                    <Link href={ROUTES.settingsCompany} onClick={() => isMobile && setOpenMobile(false)}>
-                                        <DropdownMenuItem className="cursor-pointer rounded-xl h-10 hover:bg-black/5 focus:bg-black/5 text-black">
-                                            <BadgeCheck className="mr-2 h-4 w-4" />
-                                            <span>Company Profile</span>
-                                        </DropdownMenuItem>
-                                    </Link>
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator className="bg-black/5" />
                                 <div className="p-1">
@@ -192,6 +186,29 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
+            {/* Version badge — sits between footer and rail */}
+            <Link
+                href={`${ROUTES.settings}?tab=about`}
+                onClick={() => isMobile && setOpenMobile(false)}
+                className="flex items-center justify-between px-5 py-2 group"
+            >
+                <span className="font-mono text-[10px] text-black/25 group-hover:text-black/50 transition-colors tracking-tight">
+                    v{VERSION.current}
+                </span>
+                <span
+                    className={`
+                        text-[9px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full transition-colors
+                        ${VERSION.channel === "stable"
+                            ? `bg-[${COLORS.primary}]/15 text-green-700 group-hover:bg-[${COLORS.primary}]/30`
+                            : VERSION.channel === "beta"
+                                ? "bg-orange-100 text-orange-600 group-hover:bg-orange-200"
+                                : "bg-blue-100 text-blue-600 group-hover:bg-blue-200"
+                        }
+                    `}
+                >
+                    {VERSION.channel}
+                </span>
+            </Link>
             <SidebarRail />
         </Sidebar>
     )
