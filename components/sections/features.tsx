@@ -1,27 +1,27 @@
 import { Card } from "@/components/ui/card";
 import { Section } from "@/components/ui/section";
 import {
-    Plane,
-    Receipt,
-    CreditCard,
-    Users,
+    Target,
     ShieldCheck,
+    Users,
     Globe2,
+    Trophy,
+    BarChart3,
 } from "lucide-react";
 import { FEATURES } from "@/lib/gen-variable";
 
-const icons = [Plane, Receipt, CreditCard, ShieldCheck, Users, Globe2];
+const icons = [Target, ShieldCheck, Users, Globe2, Trophy, BarChart3];
 
 export function Features() {
     return (
         <Section id="features" className="bg-slate-50">
             <div className="flex flex-col items-center justify-center gap-4 text-center max-w-[800px] mx-auto mb-12">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                    Everything you need to <span className="text-perk-green">travel</span>{" "}
-                    and <span className="text-perk-green">spend</span> smarter.
+                    Everything you need to <span className="text-perk-green">commit</span>{" "}
+                    and <span className="text-perk-green">follow through.</span>
                 </h2>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed">
-                    One platform to book trips, manage expenses, and control spend.
+                    One platform to set goals, stake your commitment, track progress, and hold each other accountable.
                 </p>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
