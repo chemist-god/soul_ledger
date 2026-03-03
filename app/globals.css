@@ -91,6 +91,16 @@
       height: 0;
     }
   }
+
+  @keyframes bounce-short {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-4px) rotate(10deg);
+    }
+  }
+  --animate-bounce-short: bounce-short 1s ease-in-out infinite;
 }
 
 .dark {
