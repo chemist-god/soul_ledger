@@ -2,7 +2,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import { Plus, Flame, TrendingUp, Target, Trophy, Users, ArrowUpRight, CheckCircle2, XCircle, Clock } from "lucide-react"
+import { Plus, Flame, TrendingUp, Target, Trophy, Users, ArrowUpRight, CheckCircle2, XCircle, Clock, Calendar } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
@@ -41,13 +41,28 @@ export default function DashboardPage() {
                 </div>
             </header>
 
-            <main className={`flex-1 p-6 md:p-8 space-y-8 bg-[${COLORS.background}]`}>
+            <main className={`flex-1 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-[${COLORS.background}]`}>
                 {/* Welcome */}
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-3xl font-bold tracking-tight text-black">
-                        Welcome back, {USER.firstName}! <span className="animate-pulse">🔥</span>
+                <div className="flex flex-col gap-1 sm:gap-2">
+                    <div className="flex items-center gap-2 text-black/50 text-[13px] sm:text-sm mb-1">
+                        <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <span className="font-medium">
+                            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                        </span>
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-black flex items-center flex-wrap gap-x-2 gap-y-1">
+                        <span>
+                            {(() => {
+                                const hours = new Date().getHours();
+                                if (hours < 12) return "Good Morning";
+                                if (hours < 18) return "Good Afternoon";
+                                return "Good Evening";
+                            })()},
+                        </span>
+                        <span className={`text-[${COLORS.primary}] drop-shadow-sm`}>{USER.firstName.toLowerCase()}</span>
+                        <span className="animate-bounce-short inline-block ml-1">👋</span>
                     </h1>
-                    <p className="text-black/60 text-[15px]">
+                    <p className="text-black/60 text-[14px] sm:text-[15px] mt-1">
                         You&apos;re on a <span className="font-bold text-black">{MOCK_STATS.currentStreak}-day streak.</span> Keep going — don&apos;t break the chain.
                     </p>
                 </div>
