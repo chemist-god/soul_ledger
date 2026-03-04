@@ -17,6 +17,8 @@ import {
     Users,
     Target,
     TrendingUp,
+    ListTodo,
+    Coins,
 } from "lucide-react"
 
 // ─────────────────────────────────────────────
@@ -108,6 +110,8 @@ export const ROUTES = {
     home: "/",
     dashboard: "/dashboard",
     tasks: "/tasks",
+    todos: "/tasks/todos",
+    stakes: "/tasks/stakes",
     community: "/community",
     analytics: "/analytics",
     docs: "/docs",
@@ -127,21 +131,28 @@ export const NAV_MAIN = [
         title: "Overview",
         url: ROUTES.dashboard,
         icon: LayoutDashboard,
+        children: null,
     },
     {
         title: "My Tasks",
         url: ROUTES.tasks,
         icon: CheckSquare,
+        children: [
+            { title: "Todos", url: ROUTES.todos, icon: ListTodo },
+            { title: "Stakes", url: ROUTES.stakes, icon: Coins },
+        ],
     },
     {
         title: "Community",
         url: ROUTES.community,
         icon: Globe2,
+        children: null,
     },
     {
         title: "Analytics",
         url: ROUTES.analytics,
         icon: BarChart3,
+        children: null,
     },
 ]
 
@@ -536,6 +547,17 @@ export const TOAST = {
         title: "Wallet Connected! 💰",
         description: "Your wallet is ready for staking.",
     },
+    // Todo flows
+    todoCreated: { title: "Todo created! 📝", description: "Your todo is ready. Want to add a stake to lock it in?" },
+    todoCompleted: { title: "Todo marked complete! ✅", description: "Great work. You're building momentum." },
+    todoDeleted: { title: "Todo deleted", description: "That todo has been removed from your list." },
+    // Stake flows
+    stakeCreated: { title: "Stake locked in! 🔒", description: "Your money is on the line. Time to deliver." },
+    stakeCompleted: { title: "Stake returned! 💰", description: "Congratulations — your stake is released. You proved yourself!" },
+    stakeForfeited: { title: "Stake forfeited 😔", description: "Better luck next time. Every setback is a setup for a comeback." },
+    stakeCopied: { title: "Link copied!", description: "Share your goal link with your accountability partners." },
+    // Community
+    communityStaked: { title: "You've backed this goal! 🤝", description: "You're now an accountability partner. Let's go!" },
 }
 
 // ─────────────────────────────────────────────
@@ -653,3 +675,193 @@ export const FAQ_ITEMS = [
             "When you make a goal public, anyone on the platform can stake on your success. If you complete the goal, your backers receive a proportional share of the earnings. If you fail, backers get their money back and Smart Todo takes a small fee.",
     },
 ]
+
+// ─────────────────────────────────────────────
+// 24. MOCK TODOS
+// ─────────────────────────────────────────────
+export type TodoPriority = "Low" | "Medium" | "High"
+export type TodoStatus = "active" | "completed" | "failed"
+
+export interface MockTodo {
+    id: string
+    title: string
+    description: string
+    category: string
+    priority: TodoPriority
+    deadline: string
+    daysLeft: number
+    status: TodoStatus
+    createdAt: string
+    hasStake: boolean
+    stakeId?: string
+}
+
+export const MOCK_TODOS: MockTodo[] = [
+    {
+        id: "todo-1",
+        title: "Read Rich Dad Poor Dad",
+        description: "Finish the entire book, take notes on each chapter, and summarize key financial mindsets.",
+        category: "Learning",
+        priority: "High",
+        deadline: "Mar 10, 2026",
+        daysLeft: 5,
+        status: "active",
+        createdAt: "Mar 01, 2026",
+        hasStake: true,
+        stakeId: "stake-1",
+    },
+    {
+        id: "todo-2",
+        title: "Complete HTML & CSS Course",
+        description: "Finish all modules on the Udemy course including the final project.",
+        category: "Learning",
+        priority: "High",
+        deadline: "Mar 21, 2026",
+        daysLeft: 16,
+        status: "active",
+        createdAt: "Mar 01, 2026",
+        hasStake: true,
+        stakeId: "stake-2",
+    },
+    {
+        id: "todo-3",
+        title: "30-Day Morning Run Streak",
+        description: "Run at least 2km every morning for 30 consecutive days. Track with fitness app.",
+        category: "Fitness",
+        priority: "Medium",
+        deadline: "Apr 01, 2026",
+        daysLeft: 27,
+        status: "active",
+        createdAt: "Mar 02, 2026",
+        hasStake: false,
+    },
+    {
+        id: "todo-4",
+        title: "Save $500 Emergency Fund",
+        description: "Cut unnecessary subscriptions and put $500 into a savings account this month.",
+        category: "Finance",
+        priority: "High",
+        deadline: "Mar 31, 2026",
+        daysLeft: 26,
+        status: "active",
+        createdAt: "Mar 01, 2026",
+        hasStake: false,
+    },
+    {
+        id: "todo-5",
+        title: "Meditate Daily for 2 Weeks",
+        description: "10 minutes of guided meditation every morning using Headspace.",
+        category: "Mindfulness",
+        priority: "Low",
+        deadline: "Feb 28, 2026",
+        daysLeft: 0,
+        status: "completed",
+        createdAt: "Feb 14, 2026",
+        hasStake: true,
+        stakeId: "stake-3",
+    },
+    {
+        id: "todo-6",
+        title: "Build a Portfolio Website",
+        description: "Design and code a personal portfolio site with at least 3 projects showcased.",
+        category: "Career",
+        priority: "Medium",
+        deadline: "Feb 20, 2026",
+        daysLeft: 0,
+        status: "failed",
+        createdAt: "Feb 01, 2026",
+        hasStake: true,
+        stakeId: "stake-4",
+    },
+]
+
+// ─────────────────────────────────────────────
+// 25. MOCK STAKES (linked to todos or standalone)
+// ─────────────────────────────────────────────
+export type StakeOutcome = "active" | "returned" | "forfeited"
+export type StakeVisibility = "public" | "private"
+
+export interface MockStake {
+    id: string
+    title: string
+    description: string
+    amount: number
+    currency: string
+    linkedTodoId?: string
+    linkedTodoTitle?: string
+    deadline: string
+    daysLeft: number
+    status: StakeOutcome
+    visibility: StakeVisibility
+    backers: number
+    category: string
+    createdAt: string
+}
+
+export const MOCK_STAKES: MockStake[] = [
+    {
+        id: "stake-1",
+        title: "Read Rich Dad Poor Dad",
+        description: "Staking on completing the full book in 9 days.",
+        amount: 50,
+        currency: "USD",
+        linkedTodoId: "todo-1",
+        linkedTodoTitle: "Read Rich Dad Poor Dad",
+        deadline: "Mar 10, 2026",
+        daysLeft: 5,
+        status: "active",
+        visibility: "public",
+        backers: 3,
+        category: "Learning",
+        createdAt: "Mar 01, 2026",
+    },
+    {
+        id: "stake-2",
+        title: "Complete HTML & CSS Course",
+        description: "Full course completion — all modules and final project.",
+        amount: 75,
+        currency: "USD",
+        linkedTodoId: "todo-2",
+        linkedTodoTitle: "Complete HTML & CSS Course",
+        deadline: "Mar 21, 2026",
+        daysLeft: 16,
+        status: "active",
+        visibility: "public",
+        backers: 5,
+        category: "Learning",
+        createdAt: "Mar 01, 2026",
+    },
+    {
+        id: "stake-3",
+        title: "Meditate Daily for 2 Weeks",
+        description: "Two weeks of consistent morning meditation.",
+        amount: 30,
+        currency: "USD",
+        linkedTodoId: "todo-5",
+        linkedTodoTitle: "Meditate Daily for 2 Weeks",
+        deadline: "Feb 28, 2026",
+        daysLeft: 0,
+        status: "returned",
+        visibility: "private",
+        backers: 0,
+        category: "Mindfulness",
+        createdAt: "Feb 14, 2026",
+    },
+    {
+        id: "stake-4",
+        title: "Build a Portfolio Website",
+        description: "Standalone stake on launching the portfolio site.",
+        amount: 40,
+        currency: "USD",
+        linkedTodoId: "todo-6",
+        linkedTodoTitle: "Build a Portfolio Website",
+        deadline: "Feb 20, 2026",
+        daysLeft: 0,
+        status: "forfeited",
+        visibility: "private",
+        backers: 1,
+        category: "Career",
+        createdAt: "Feb 01, 2026",
+    },
+]
+
