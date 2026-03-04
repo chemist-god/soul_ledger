@@ -9,6 +9,7 @@ import {
     BadgeCheck,
     LogOut,
     LifeBuoy,
+    ChevronDown,
 } from "lucide-react"
 
 import {
@@ -45,6 +46,19 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
     const pathname = usePathname()
     const { setOpenMobile, isMobile } = useSidebar()
 
+    // Track which collapsible groups are open
+    const [openGroups, setOpenGroups] = React.useState<string[]>(() => {
+        // Auto-open My Tasks group if we're on a sub-route
+        if (pathname?.startsWith("/tasks/")) return ["My Tasks"]
+        return []
+    })
+
+    const toggleGroup = (title: string) => {
+        setOpenGroups(prev =>
+            prev.includes(title) ? prev.filter(g => g !== title) : [...prev, title]
+        )
+    }
+
     return (
         <Sidebar className={`border-r border-black/5 bg-[${COLORS.background}]`} {...props}>
             <SidebarHeader className="h-16 flex items-center px-6 border-b border-black/5">
@@ -53,6 +67,7 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
                     <span className="font-bold text-xl tracking-tight text-black">{BRAND.name}</span>
                 </Link>
             </SidebarHeader>
+
             <SidebarContent className="px-3 py-4 gap-6">
                 <SidebarGroup>
                     <SidebarGroupLabel className="text-xs font-medium text-black/50 uppercase tracking-wider mb-2 px-3">
@@ -61,20 +76,78 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {NAV_MAIN.map((item) => {
-                                const isActive = pathname === item.url || pathname?.startsWith(item.url + '/')
+                                const hasChildren = item.children && item.children.length > 0
+                                const isGroupOpen = openGroups.includes(item.title)
+                                const isParentActive = pathname === item.url || pathname?.startsWith(item.url + "/")
+                                const isExactActive = pathname === item.url
+
+                                if (hasChildren) {
+                                    return (
+                                        <SidebarMenuItem key={item.title}>
+                                            {/* Parent collapsible row */}
+                                            <SidebarMenuButton
+                                                tooltip={item.title}
+                                                onClick={() => toggleGroup(item.title)}
+                                                className={`rounded-xl h-11 transition-all cursor-pointer w-full ${isParentActive
+                                                    ? `bg-[${COLORS.primary}]/15 text-black font-semibold`
+                                                    : "text-black/70 hover:bg-black/5 hover:text-black font-medium"
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3 px-3 w-full h-full">
+                                                    <item.icon className={`h-5 w-5 ${isParentActive ? `text-[${COLORS.primary}]` : "text-black/50"}`} />
+                                                    <span className="text-[14px] flex-1">{item.title}</span>
+                                                    <ChevronDown
+                                                        className={`h-4 w-4 text-black/40 transition-transform duration-200 ${isGroupOpen ? "rotate-180" : ""}`}
+                                                    />
+                                                </div>
+                                            </SidebarMenuButton>
+
+                                            {/* Children sub-items */}
+                                            {isGroupOpen && (
+                                                <div className="mt-1 ml-4 pl-3 border-l-2 border-black/8 space-y-0.5">
+                                                    {item.children!.map((child) => {
+                                                        const isChildActive = pathname === child.url
+                                                        return (
+                                                            <SidebarMenuButton
+                                                                key={child.title}
+                                                                asChild
+                                                                isActive={isChildActive}
+                                                                tooltip={child.title}
+                                                                className={`rounded-xl h-10 transition-all ${isChildActive
+                                                                    ? `bg-[${COLORS.primary}] text-black font-semibold shadow-sm`
+                                                                    : "text-black/60 hover:bg-black/5 hover:text-black font-medium"
+                                                                    }`}
+                                                            >
+                                                                <Link
+                                                                    href={child.url}
+                                                                    className="flex items-center gap-3 px-3 w-full h-full"
+                                                                    onClick={() => isMobile && setOpenMobile(false)}
+                                                                >
+                                                                    <child.icon className={`h-4 w-4 ${isChildActive ? "text-black" : "text-black/40"}`} />
+                                                                    <span className="text-[13px]">{child.title}</span>
+                                                                </Link>
+                                                            </SidebarMenuButton>
+                                                        )
+                                                    })}
+                                                </div>
+                                            )}
+                                        </SidebarMenuItem>
+                                    )
+                                }
+
                                 return (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton
                                             asChild
-                                            isActive={isActive}
+                                            isActive={isExactActive}
                                             tooltip={item.title}
-                                            className={`rounded-xl h-11 transition-all ${isActive
+                                            className={`rounded-xl h-11 transition-all ${isExactActive
                                                 ? `bg-[${COLORS.primary}] text-black font-semibold shadow-sm`
-                                                : 'text-black/70 hover:bg-black/5 hover:text-black font-medium'
+                                                : "text-black/70 hover:bg-black/5 hover:text-black font-medium"
                                                 }`}
                                         >
                                             <Link href={item.url} className="flex items-center gap-3 px-3 w-full h-full" onClick={() => isMobile && setOpenMobile(false)}>
-                                                <item.icon className={`h-5 w-5 ${isActive ? 'text-black' : 'text-black/50'}`} />
+                                                <item.icon className={`h-5 w-5 ${isExactActive ? "text-black" : "text-black/50"}`} />
                                                 <span className="text-[14px]">{item.title}</span>
                                             </Link>
                                         </SidebarMenuButton>
@@ -186,7 +259,8 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
-            {/* Version badge — sits between footer and rail */}
+
+            {/* Version badge */}
             <Link
                 href={`${ROUTES.settings}?tab=about`}
                 onClick={() => isMobile && setOpenMobile(false)}
