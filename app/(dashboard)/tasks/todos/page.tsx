@@ -22,6 +22,14 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog"
+import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerDescription,
+} from "@/components/ui/drawer"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { toast } from "sonner"
 import {
     Plus,
@@ -76,6 +84,7 @@ const emptyForm = {
 }
 
 export default function TodosPage() {
+    const isDesktop = useMediaQuery("(min-width: 768px)")
     const [todos, setTodos] = useState<MockTodo[]>(MOCK_TODOS)
     const [activeTab, setActiveTab] = useState<"all" | TodoStatus>("all")
     const [search, setSearch] = useState("")
@@ -154,7 +163,7 @@ export default function TodosPage() {
             <main className={`flex-1 p-4 sm:p-8 md:p-10 space-y-8 md:space-y-10 bg-[${COLORS.background}] max-w-6xl mx-auto w-full`}>
                 {/* Page title area */}
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-black flex items-center gap-3">
+                    <h1 className="text-[28px] sm:text-4xl md:text-5xl font-black tracking-tight text-black flex items-center gap-3">
                         <ListTodo className={`h-8 w-8 sm:h-10 sm:w-10 text-[${COLORS.primary}] drop-shadow-sm`} /> Todos
                     </h1>
                     <p className="text-black/60 text-[15px] sm:text-[16px] font-medium max-w-lg leading-relaxed">
@@ -163,27 +172,27 @@ export default function TodosPage() {
                 </div>
 
                 {/* Stats row - Handcrafted look */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-5">
                     {[
                         { label: "Active", value: todos.filter(t => t.status === "active").length, color: "text-black", labelColor: "text-black/50" },
                         { label: "Completed", value: todos.filter(t => t.status === "completed").length, color: "text-emerald-600", labelColor: "text-emerald-700/60" },
                         { label: "Failed", value: todos.filter(t => t.status === "failed").length, color: "text-red-600", labelColor: "text-red-700/60" },
                     ].map((stat) => (
-                        <div key={stat.label} className="rounded-3xl p-6 bg-white border border-black/[0.04] shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col gap-1 hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-shadow">
-                            <span className={`text-4xl sm:text-5xl font-black tracking-tighter ${stat.color}`}>{stat.value}</span>
-                            <span className={`text-[13px] sm:text-[14px] font-bold tracking-widest uppercase ${stat.labelColor}`}>{stat.label}</span>
+                        <div key={stat.label} className="rounded-[20px] sm:rounded-2xl p-4 sm:p-5 bg-white border border-black/[0.04] shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col items-center justify-center gap-0.5 hover:shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-shadow">
+                            <span className={`text-3xl sm:text-4xl font-black tracking-tighter leading-none ${stat.color}`}>{stat.value}</span>
+                            <span className={`text-[10px] sm:text-[11px] font-bold tracking-widest uppercase mt-0.5 ${stat.labelColor}`}>{stat.label}</span>
                         </div>
                     ))}
                 </div>
 
                 {/* Search + Filter tabs - Premium segmented control feel */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 py-2">
-                    <div className="flex items-center gap-1 bg-black/[0.03] p-1.5 rounded-2xl w-full sm:w-auto overflow-x-auto hide-scrollbar border border-black/[0.02]">
+                    <div className="flex items-center gap-1 bg-black/[0.03] p-1.5 rounded-2xl w-full sm:w-auto overflow-x-auto snap-x snap-mandatory hide-scrollbar border border-black/[0.02]">
                         {STATUS_TABS.map((tab) => (
                             <button
                                 key={tab.value}
                                 onClick={() => setActiveTab(tab.value)}
-                                className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap ${activeTab === tab.value
+                                className={`snap-center shrink-0 flex-1 sm:flex-none px-5 py-2.5 rounded-[14px] text-[13px] sm:text-[14px] font-bold transition-all whitespace-nowrap ${activeTab === tab.value
                                     ? "bg-white text-black shadow-[0_1px_5px_rgba(0,0,0,0.05)]"
                                     : "text-black/50 hover:text-black hover:bg-black/5"
                                     }`}
@@ -226,7 +235,7 @@ export default function TodosPage() {
                             return (
                                 <div
                                     key={todo.id}
-                                    className="group bg-white rounded-[24px] border border-black/[0.04] p-5 sm:p-7 flex flex-col sm:flex-row gap-5 shadow-[0_2px_10px_rgba(0,0,0,0.015)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden"
+                                    className="group bg-white rounded-[24px] sm:rounded-[32px] border border-black/[0.04] p-5 sm:p-7 flex flex-col sm:flex-row gap-4 sm:gap-6 shadow-[0_2px_10px_rgba(0,0,0,0.015)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden"
                                 >
                                     {/* Subtle gradient background based on status for active items */}
                                     {todo.status === "active" && (
@@ -236,7 +245,7 @@ export default function TodosPage() {
                                     <div className="flex-1 min-w-0 flex flex-col justify-center relative z-10">
                                         <div className="flex flex-wrap items-center gap-3 mb-2.5">
                                             {status.icon}
-                                            <span className="text-[17px] sm:text-[19px] font-black text-black tracking-tight truncate">{todo.title}</span>
+                                            <span className="text-[16px] sm:text-[19px] font-black text-black tracking-tight truncate">{todo.title}</span>
                                             <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border ${PRIORITY_COLORS[todo.priority]}`}>
                                                 {todo.priority}
                                             </span>
@@ -270,7 +279,7 @@ export default function TodosPage() {
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex flex-row sm:flex-col items-center justify-end sm:justify-center gap-3 shrink-0 pt-5 sm:pt-0 border-t border-black/5 sm:border-t-0 sm:border-l sm:pl-7 relative z-10 w-full sm:w-auto">
+                                    <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center gap-2 sm:gap-3 shrink-0 mt-2 sm:mt-0 pt-5 sm:pt-0 border-t border-black/[0.04] sm:border-t-0 sm:border-l sm:pl-7 relative z-10 w-full sm:w-auto">
                                         {todo.status === "active" && (
                                             <>
                                                 {!todo.hasStake && (
@@ -310,109 +319,155 @@ export default function TodosPage() {
                 )}
             </main>
 
-            {/* Create Todo Dialog - Premium Styling */}
-            <Dialog open={showCreate} onOpenChange={setShowCreate}>
-                <DialogContent className="sm:max-w-lg rounded-[32px] border border-black/[0.05] bg-white p-0 overflow-hidden shadow-2xl">
-                    <DialogHeader className="px-6 sm:px-8 pt-8 pb-5 border-b border-black/[0.03] bg-white relative">
-                        <div className={`absolute top-0 left-0 w-full h-1 bg-[${COLORS.primary}]`} />
-                        <DialogTitle className="text-2xl font-black text-black tracking-tight flex items-center gap-3">
-                            <div className={`h-10 w-10 rounded-xl bg-[${COLORS.primary}]/10 flex items-center justify-center`}>
-                                <ListTodo className={`h-5 w-5 text-black`} />
-                            </div>
-                            New Todo
-                        </DialogTitle>
-                        <DialogDescription className="text-black/60 text-[14px] mt-2 font-medium">
-                            Plan your commitment to yourself. You can back it with a stake later to lock it in.
-                        </DialogDescription>
-                    </DialogHeader>
+            {/* Desktop Dialog */}
+            {isDesktop ? (
+                <Dialog open={showCreate} onOpenChange={setShowCreate}>
+                    <DialogContent className="sm:max-w-lg rounded-[32px] border border-black/[0.05] bg-white p-0 overflow-hidden shadow-2xl">
+                        <DialogHeader className="px-6 sm:px-8 pt-8 pb-5 border-b border-black/[0.03] bg-white relative">
+                            <div className={`absolute top-0 left-0 w-full h-1 bg-[${COLORS.primary}]`} />
+                            <DialogTitle className="text-2xl font-black text-black tracking-tight flex items-center gap-3">
+                                <div className={`h-10 w-10 rounded-xl bg-[${COLORS.primary}]/10 flex items-center justify-center`}>
+                                    <ListTodo className={`h-5 w-5 text-black`} />
+                                </div>
+                                New Todo
+                            </DialogTitle>
+                            <DialogDescription className="text-black/60 text-[14px] mt-2 font-medium">
+                                Plan your commitment to yourself. You can back it with a stake later to lock it in.
+                            </DialogDescription>
+                        </DialogHeader>
 
-                    <div className="px-6 sm:px-8 py-6 space-y-6 bg-black/[0.015]">
-                        <div className="space-y-2">
-                            <Label className="text-[14px] font-bold text-black/80">Title <span className="text-red-500">*</span></Label>
-                            <Input
-                                value={form.title}
-                                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                                placeholder="e.g. Read Rich Dad Poor Dad"
-                                className={`rounded-xl border-black/[0.08] bg-white h-12 text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
-                            />
-                        </div>
+                        <TodoForm
+                            form={form}
+                            setForm={setForm}
+                            onCancel={() => setShowCreate(false)}
+                            onSubmit={handleCreate}
+                            isSubmitting={isSubmitting}
+                        />
+                    </DialogContent>
+                </Dialog>
+            ) : (
+                /* Mobile Drawer */
+                <Drawer open={showCreate} onOpenChange={setShowCreate}>
+                    <DrawerContent className="bg-white border-t border-black/[0.05] rounded-t-[32px]">
+                        <DrawerHeader className="text-left px-6 pt-6 pb-2">
+                            <DrawerTitle className="text-2xl font-black text-black tracking-tight flex items-center gap-3">
+                                <div className={`h-10 w-10 rounded-xl bg-[${COLORS.primary}]/10 flex items-center justify-center`}>
+                                    <ListTodo className={`h-5 w-5 text-black`} />
+                                </div>
+                                New Todo
+                            </DrawerTitle>
+                            <DrawerDescription className="text-black/60 text-[14px] mt-2 font-medium">
+                                Plan your commitment to yourself. You can back it with a stake later to lock it in.
+                            </DrawerDescription>
+                        </DrawerHeader>
 
-                        <div className="space-y-2">
-                            <Label className="text-[14px] font-bold text-black/80">Description</Label>
-                            <Textarea
-                                value={form.description}
-                                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                placeholder="Add more context about this commitment…"
-                                className={`rounded-xl border-black/[0.08] bg-white text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}] resize-none min-h-[100px] p-4`}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label className="text-[14px] font-bold text-black/80">Category</Label>
-                                <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                                    <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus:ring-2 focus:ring-[${COLORS.primary}]/50 focus:border-[${COLORS.primary}]`}>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-black/[0.05] shadow-lg">
-                                        {GOAL_CATEGORIES.filter(c => c !== "All").map((c) => (
-                                            <SelectItem key={c} value={c} className="text-[14px] font-medium py-2.5">{c}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label className="text-[14px] font-bold text-black/80">Priority</Label>
-                                <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v as typeof form.priority })}>
-                                    <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus:ring-2 focus:ring-[${COLORS.primary}]/50 focus:border-[${COLORS.primary}]`}>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-black/[0.05] shadow-lg">
-                                        {["High", "Medium", "Low"].map((p) => (
-                                            <SelectItem key={p} value={p} className="text-[14px] font-medium py-2.5">{p}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                        <div className="px-6 max-h-[70vh] overflow-y-auto hide-scrollbar pb-6">
+                            <div className="-mx-6">
+                                <TodoForm
+                                    form={form}
+                                    setForm={setForm}
+                                    onCancel={() => setShowCreate(false)}
+                                    onSubmit={handleCreate}
+                                    isSubmitting={isSubmitting}
+                                />
                             </div>
                         </div>
+                    </DrawerContent>
+                </Drawer>
+            )
+            }
+        </div >
+    )
+}
 
-                        <div className="space-y-2">
-                            <Label className="text-[14px] font-bold text-black/80">Deadline <span className="text-red-500">*</span></Label>
-                            <Input
-                                type="date"
-                                value={form.deadline}
-                                onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-                                className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
-                            />
-                        </div>
+function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: any, setForm: any, onCancel: () => void, onSubmit: () => void, isSubmitting: boolean }) {
+    return (
+        <div className="flex flex-col">
+            <div className="px-6 sm:px-8 py-6 space-y-6 bg-black/[0.015]">
+                <div className="space-y-2">
+                    <Label className="text-[14px] font-bold text-black/80">Title <span className="text-red-500">*</span></Label>
+                    <Input
+                        value={form.title}
+                        onChange={(e) => setForm({ ...form, title: e.target.value })}
+                        placeholder="e.g. Read Rich Dad Poor Dad"
+                        className={`rounded-xl border-black/[0.08] bg-white h-12 text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label className="text-[14px] font-bold text-black/80">Description</Label>
+                    <Textarea
+                        value={form.description}
+                        onChange={(e) => setForm({ ...form, description: e.target.value })}
+                        placeholder="Add more context about this commitment…"
+                        className={`rounded-xl border-black/[0.08] bg-white text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}] resize-none min-h-[100px] p-4`}
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label className="text-[14px] font-bold text-black/80">Category</Label>
+                        <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                            <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus:ring-2 focus:ring-[${COLORS.primary}]/50 focus:border-[${COLORS.primary}]`}>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl border-black/[0.05] shadow-lg">
+                                {GOAL_CATEGORIES.filter(c => c !== "All").map((c) => (
+                                    <SelectItem key={c} value={c} className="text-[14px] font-medium py-2.5">{c}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
-                    <div className="px-6 sm:px-8 pb-8 pt-4 flex flex-col sm:flex-row gap-3 bg-black/[0.015]">
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowCreate(false)}
-                            className="flex-1 h-12 rounded-xl border-black/[0.08] bg-white text-black/70 font-bold hover:bg-black/5 hover:text-black transition-colors"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleCreate}
-                            disabled={!form.title.trim() || !form.deadline || isSubmitting}
-                            className={`flex-1 h-12 rounded-xl bg-black text-white hover:bg-black/80 font-bold rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 disabled:opacity-50`}
-                        >
-                            {isSubmitting ? (
-                                <span className="flex items-center gap-2">
-                                    <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                                    Creating…
-                                </span>
-                            ) : (
-                                <>Create Todo <ArrowRight className="h-4 w-4 ml-1" /></>
-                            )}
-                        </Button>
+                    <div className="space-y-2">
+                        <Label className="text-[14px] font-bold text-black/80">Priority</Label>
+                        <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v as typeof form.priority })}>
+                            <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus:ring-2 focus:ring-[${COLORS.primary}]/50 focus:border-[${COLORS.primary}]`}>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl border-black/[0.05] shadow-lg">
+                                {["High", "Medium", "Low"].map((p) => (
+                                    <SelectItem key={p} value={p} className="text-[14px] font-medium py-2.5">{p}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
-                </DialogContent>
-            </Dialog>
+                </div>
+
+                <div className="space-y-2">
+                    <Label className="text-[14px] font-bold text-black/80">Deadline <span className="text-red-500">*</span></Label>
+                    <Input
+                        type="date"
+                        value={form.deadline}
+                        onChange={(e) => setForm({ ...form, deadline: e.target.value })}
+                        className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
+                    />
+                </div>
+            </div>
+
+            <div className="px-6 sm:px-8 pb-8 pt-4 flex flex-col sm:flex-row gap-3 bg-black/[0.015]">
+                <Button
+                    variant="outline"
+                    onClick={onCancel}
+                    className="flex-1 h-12 rounded-xl border-black/[0.08] bg-white text-black/70 font-bold hover:bg-black/5 hover:text-black transition-colors"
+                >
+                    Cancel
+                </Button>
+                <Button
+                    onClick={onSubmit}
+                    disabled={!form.title.trim() || !form.deadline || isSubmitting}
+                    className={`flex-1 h-12 rounded-xl bg-black text-white hover:bg-black/80 font-bold rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 disabled:opacity-50`}
+                >
+                    {isSubmitting ? (
+                        <span className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            Creating…
+                        </span>
+                    ) : (
+                        <>Create Todo <ArrowRight className="h-4 w-4 ml-1" /></>
+                    )}
+                </Button>
+            </div>
         </div>
     )
 }
