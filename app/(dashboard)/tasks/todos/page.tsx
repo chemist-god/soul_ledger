@@ -28,9 +28,17 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerDescription,
+    DrawerTrigger,
 } from "@/components/ui/drawer"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { toast } from "sonner"
+import { format } from "date-fns"
 import {
     Plus,
     CheckCircle2,
@@ -42,7 +50,8 @@ import {
     ListTodo,
     AlarmClock,
     LayoutGrid,
-    Lock
+    Lock,
+    Calendar as CalendarIcon
 } from "lucide-react"
 import { COLORS, GOAL_CATEGORIES, MOCK_TODOS, ROUTES, TOAST, MockTodo, TodoStatus } from "@/lib/gen-variable"
 import Link from "next/link"
@@ -80,7 +89,10 @@ const emptyForm = {
     description: "",
     category: "Learning",
     priority: "Medium" as "High" | "Medium" | "Low",
-    deadline: "",
+    startDate: undefined as Date | undefined,
+    startTime: "",
+    endDate: undefined as Date | undefined,
+    endTime: "",
 }
 
 export default function TodosPage() {
@@ -99,7 +111,7 @@ export default function TodosPage() {
     })
 
     const handleCreate = async () => {
-        if (!form.title.trim() || !form.deadline) return
+        if (!form.title.trim() || !form.endDate) return
         setIsSubmitting(true)
         await new Promise((r) => setTimeout(r, 600))
 
@@ -109,8 +121,8 @@ export default function TodosPage() {
             description: form.description.trim(),
             category: form.category,
             priority: form.priority,
-            deadline: new Date(form.deadline).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
-            daysLeft: Math.max(0, Math.ceil((new Date(form.deadline).getTime() - Date.now()) / 86400000)),
+            deadline: format(form.endDate, "MMM d, yyyy"),
+            daysLeft: Math.max(0, Math.ceil((form.endDate.getTime() - Date.now()) / 86400000)),
             status: "active",
             createdAt: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
             hasStake: false,
@@ -388,7 +400,7 @@ function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: a
                     <Label className="text-[14px] font-bold text-black/80">Title <span className="text-red-500">*</span></Label>
                     <Input
                         value={form.title}
-                        onChange={(e) => setForm({ ...form, title: e.target.value })}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, title: e.target.value })}
                         placeholder="e.g. Read Rich Dad Poor Dad"
                         className={`rounded-xl border-black/[0.08] bg-white h-12 text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
                     />
@@ -398,7 +410,7 @@ function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: a
                     <Label className="text-[14px] font-bold text-black/80">Description</Label>
                     <Textarea
                         value={form.description}
-                        onChange={(e) => setForm({ ...form, description: e.target.value })}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setForm({ ...form, description: e.target.value })}
                         placeholder="Add more context about this commitment…"
                         className={`rounded-xl border-black/[0.08] bg-white text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}] resize-none min-h-[100px] p-4`}
                     />
@@ -407,7 +419,7 @@ function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: a
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label className="text-[14px] font-bold text-black/80">Category</Label>
-                        <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                        <Select value={form.category} onValueChange={(v: string) => setForm({ ...form, category: v })}>
                             <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus:ring-2 focus:ring-[${COLORS.primary}]/50 focus:border-[${COLORS.primary}]`}>
                                 <SelectValue />
                             </SelectTrigger>
@@ -421,7 +433,7 @@ function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: a
 
                     <div className="space-y-2">
                         <Label className="text-[14px] font-bold text-black/80">Priority</Label>
-                        <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v as typeof form.priority })}>
+                        <Select value={form.priority} onValueChange={(v: string) => setForm({ ...form, priority: v as typeof form.priority })}>
                             <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus:ring-2 focus:ring-[${COLORS.primary}]/50 focus:border-[${COLORS.primary}]`}>
                                 <SelectValue />
                             </SelectTrigger>
@@ -434,13 +446,20 @@ function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: a
                     </div>
                 </div>
 
-                <div className="space-y-2">
-                    <Label className="text-[14px] font-bold text-black/80">Deadline <span className="text-red-500">*</span></Label>
-                    <Input
-                        type="date"
-                        value={form.deadline}
-                        onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-                        className={`rounded-xl border-black/[0.08] bg-white h-12 text-[14px] font-medium shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
+                <div className="flex flex-col gap-4">
+                    <DateTimePicker
+                        label="Start Date & Time (Optional)"
+                        date={form.startDate}
+                        setDate={(d) => setForm({ ...form, startDate: d })}
+                        time={form.startTime}
+                        setTime={(t) => setForm({ ...form, startTime: t })}
+                    />
+                    <DateTimePicker
+                        label="Deadline Date & Time *"
+                        date={form.endDate}
+                        setDate={(d) => setForm({ ...form, endDate: d })}
+                        time={form.endTime}
+                        setTime={(t) => setForm({ ...form, endTime: t })}
                     />
                 </div>
             </div>
@@ -455,7 +474,7 @@ function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: a
                 </Button>
                 <Button
                     onClick={onSubmit}
-                    disabled={!form.title.trim() || !form.deadline || isSubmitting}
+                    disabled={!form.title.trim() || !form.endDate || isSubmitting}
                     className={`flex-1 h-12 rounded-xl bg-black text-white hover:bg-black/80 font-bold rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 disabled:opacity-50`}
                 >
                     {isSubmitting ? (
@@ -467,6 +486,86 @@ function TodoForm({ form, setForm, onCancel, onSubmit, isSubmitting }: { form: a
                         <>Create Todo <ArrowRight className="h-4 w-4 ml-1" /></>
                     )}
                 </Button>
+            </div>
+        </div>
+    )
+}
+
+function DateTimePicker({ label, date, setDate, time, setTime }: { label: string, date: Date | undefined, setDate: (d: Date | undefined) => void, time: string, setTime: (t: string) => void }) {
+    const isDesktop = useMediaQuery("(min-width: 768px)")
+    const [open, setOpen] = useState(false)
+
+    const CalendarContent = (
+        <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(d) => {
+                setDate(d)
+                if (isDesktop) setOpen(false)
+            }}
+            initialFocus
+            className="p-3 pointer-events-auto flex justify-center"
+        />
+    )
+
+    return (
+        <div className="space-y-2">
+            <Label className="text-[14px] font-bold text-black/80">{label}</Label>
+            <div className="flex gap-2">
+                {isDesktop ? (
+                    <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={`flex-1 justify-start text-left font-medium h-12 rounded-xl border-black/[0.08] shadow-sm hover:bg-black/[0.02] focus:ring-2 focus:ring-[${COLORS.primary}]/50 transition-colors ${!date && "text-black/40"}`}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                                <span className="truncate">{date ? format(date, "PPP") : "Pick date"}</span>
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 rounded-2xl border-black/[0.05] shadow-xl" align="start">
+                            {CalendarContent}
+                        </PopoverContent>
+                    </Popover>
+                ) : (
+                    <Drawer open={open} onOpenChange={setOpen}>
+                        <DrawerTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={`flex-1 justify-start text-left font-bold h-14 rounded-xl border-black/[0.08] shadow-sm hover:bg-black/[0.02] focus:ring-2 focus:ring-[${COLORS.primary}]/50 transition-colors ${!date && "text-black/40"}`}
+                            >
+                                <CalendarIcon className="mr-2 h-5 w-5 shrink-0" />
+                                <span className="truncate text-[15px]">{date ? format(date, "PPP") : "Pick date"}</span>
+                            </Button>
+                        </DrawerTrigger>
+                        <DrawerContent className="bg-white border-t border-black/[0.05] rounded-t-[32px] pb-6">
+                            <DrawerHeader className="text-left px-6 pt-6 pb-2 border-b border-black/[0.03]">
+                                <DrawerTitle className="text-xl font-black text-black tracking-tight flex items-center gap-2">
+                                    <CalendarIcon className="h-5 w-5 text-black/50" /> Select Date
+                                </DrawerTitle>
+                            </DrawerHeader>
+                            <div className="flex justify-center p-4">
+                                {CalendarContent}
+                            </div>
+                            <div className="px-6 mt-2">
+                                <Button
+                                    className={`w-full h-14 rounded-xl bg-black text-white font-bold text-[16px] active:scale-95 transition-transform`}
+                                    onClick={() => setOpen(false)}
+                                >
+                                    Done
+                                </Button>
+                            </div>
+                        </DrawerContent>
+                    </Drawer>
+                )}
+
+                <Input
+                    type="time"
+                    value={time}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTime(e.target.value)}
+                    className={`w-[110px] sm:w-[130px] rounded-xl border-black/[0.08] bg-white ${isDesktop ? 'h-12 text-[14px]' : 'h-14 text-[16px] px-2'} font-bold shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}] shrink-0`}
+                    aria-label="Time"
+                />
             </div>
         </div>
     )
