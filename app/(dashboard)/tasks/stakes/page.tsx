@@ -23,8 +23,24 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog"
+import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerDescription,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { format } from "date-fns"
 import {
     Plus,
     CheckCircle2,
@@ -40,6 +56,7 @@ import {
     Link2,
     LayoutGrid,
     TrendingUp,
+    Calendar as CalendarIcon
 } from "lucide-react"
 import {
     COLORS,
@@ -71,13 +88,15 @@ const emptyForm = {
     description: "",
     amount: "",
     category: "Learning",
-    deadline: "",
+    endDate: undefined as Date | undefined,
+    endTime: "",
     visibility: "public" as "public" | "private",
     linkMode: "existing" as "existing" | "scratch",
     linkedTodoId: "",
 }
 
 function StakesPageContent() {
+    const isDesktop = useMediaQuery("(min-width: 768px)")
     const searchParams = useSearchParams()
     const prefilledTodoId = searchParams.get("todoId") ?? ""
     const prefilledTodoTitle = searchParams.get("todoTitle") ?? ""
@@ -109,7 +128,7 @@ function StakesPageContent() {
         const title = form.linkMode === "existing" && selectedTodo
             ? selectedTodo.title
             : form.title.trim()
-        if (!title || !form.amount || !form.deadline) return
+        if (!title || !form.amount || !form.endDate) return
         setIsSubmitting(true)
         await new Promise((r) => setTimeout(r, 700))
 
@@ -121,8 +140,8 @@ function StakesPageContent() {
             currency: "USD",
             linkedTodoId: form.linkMode === "existing" ? form.linkedTodoId : undefined,
             linkedTodoTitle: form.linkMode === "existing" ? selectedTodo?.title : undefined,
-            deadline: new Date(form.deadline).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
-            daysLeft: Math.max(0, Math.ceil((new Date(form.deadline).getTime() - Date.now()) / 86400000)),
+            deadline: format(form.endDate, "MMM d, yyyy"),
+            daysLeft: Math.max(0, Math.ceil((form.endDate.getTime() - Date.now()) / 86400000)),
             status: "active",
             visibility: form.visibility,
             backers: 0,
@@ -302,182 +321,313 @@ function StakesPageContent() {
                 )}
             </main>
 
-            {/* Create Stake Dialog */}
-            <Dialog open={showCreate} onOpenChange={setShowCreate}>
-                <DialogContent className="sm:max-w-lg rounded-3xl border-black/10 bg-white p-0 overflow-hidden">
-                    <DialogHeader className={`px-6 pt-6 pb-4 border-b border-black/5 bg-[${COLORS.background}]`}>
-                        <DialogTitle className="text-xl font-bold text-black flex items-center gap-2">
-                            <Coins className="h-5 w-5" /> New Stake
-                        </DialogTitle>
-                        <DialogDescription className="text-black/55 text-[13px]">
-                            Back your commitment with real money. No excuses.
-                        </DialogDescription>
-                    </DialogHeader>
+            {isDesktop ? (
+                <Dialog open={showCreate} onOpenChange={setShowCreate}>
+                    <DialogContent className="sm:max-w-lg rounded-[32px] border border-black/[0.05] bg-white p-0 overflow-hidden shadow-2xl">
+                        <DialogHeader className={`px-6 sm:px-8 pt-8 pb-5 border-b border-black/[0.03] bg-white relative`}>
+                            <div className={`absolute top-0 left-0 w-full h-1 bg-[${COLORS.primary}]`} />
+                            <DialogTitle className="text-2xl font-black text-black tracking-tight flex items-center gap-3">
+                                <div className={`h-10 w-10 rounded-xl bg-[${COLORS.primary}]/10 flex items-center justify-center`}>
+                                    <Coins className={`h-5 w-5 text-black`} />
+                                </div>
+                                New Stake
+                            </DialogTitle>
+                            <DialogDescription className="text-black/60 text-[14px] mt-2 font-medium">
+                                Back your commitment with real money. No excuses.
+                            </DialogDescription>
+                        </DialogHeader>
 
-                    <div className="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto">
-                        {/* Link mode toggle */}
-                        <div className="space-y-2">
-                            <Label className="text-[13px] font-semibold text-black/70">Link to</Label>
-                            <div className="flex gap-2">
-                                {[
-                                    { label: "Existing Todo", value: "existing" as const },
-                                    { label: "Create from Scratch", value: "scratch" as const },
-                                ].map((opt) => (
-                                    <button
-                                        key={opt.value}
-                                        onClick={() => setForm({ ...form, linkMode: opt.value, linkedTodoId: opt.value === "existing" ? prefilledTodoId : "" })}
-                                        className={`flex-1 py-2 rounded-xl text-[13px] font-semibold transition-all border ${form.linkMode === opt.value
-                                            ? `bg-black text-white border-black`
-                                            : "bg-white text-black/60 border-black/10 hover:border-black/30"
-                                            }`}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
+                        <StakeForm
+                            form={form}
+                            setForm={setForm}
+                            selectedTodo={selectedTodo}
+                            prefilledTodoId={prefilledTodoId}
+                            onCancel={() => setShowCreate(false)}
+                            onSubmit={handleCreate}
+                            isSubmitting={isSubmitting}
+                        />
+                    </DialogContent>
+                </Dialog>
+            ) : (
+                <Drawer open={showCreate} onOpenChange={setShowCreate}>
+                    <DrawerContent className="bg-white border-t border-black/[0.05] rounded-t-[32px]">
+                        <DrawerHeader className="text-left px-6 pt-6 pb-2">
+                            <DrawerTitle className="text-2xl font-black text-black tracking-tight flex items-center gap-3">
+                                <div className={`h-10 w-10 rounded-xl bg-[${COLORS.primary}]/10 flex items-center justify-center`}>
+                                    <Coins className={`h-5 w-5 text-black`} />
+                                </div>
+                                New Stake
+                            </DrawerTitle>
+                            <DrawerDescription className="text-black/60 text-[14px] mt-2 font-medium">
+                                Back your commitment with real money. No excuses.
+                            </DrawerDescription>
+                        </DrawerHeader>
+
+                        <div className="px-6 max-h-[75vh] overflow-y-auto hide-scrollbar pb-6 mt-2">
+                            <div className="-mx-6">
+                                <StakeForm
+                                    form={form}
+                                    setForm={setForm}
+                                    selectedTodo={selectedTodo}
+                                    prefilledTodoId={prefilledTodoId}
+                                    onCancel={() => setShowCreate(false)}
+                                    onSubmit={handleCreate}
+                                    isSubmitting={isSubmitting}
+                                />
                             </div>
                         </div>
+                    </DrawerContent>
+                </Drawer>
+            )}
+        </div>
+    )
+}
 
-                        {/* Existing todo selector */}
-                        {form.linkMode === "existing" ? (
-                            <div className="space-y-1.5">
-                                <Label className="text-[13px] font-semibold text-black/70">Select Todo <span className="text-red-500">*</span></Label>
-                                <Select value={form.linkedTodoId} onValueChange={(v) => setForm({ ...form, linkedTodoId: v })}>
-                                    <SelectTrigger className="rounded-xl border-black/10 h-11 text-[13px]">
-                                        <SelectValue placeholder="Pick a todo to stake on…" />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl">
-                                        {MOCK_TODOS.filter(t => t.status === "active").map((t) => (
-                                            <SelectItem key={t.id} value={t.id} className="text-[13px]">
-                                                {t.title}
-                                                {t.hasStake && <span className="ml-2 text-black/40">(already staked)</span>}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {selectedTodo && (
-                                    <div className="p-3 rounded-xl bg-black/4 border border-black/6 text-[12px] text-black/60">
-                                        📌 {selectedTodo.description || "No description"} · Due: {selectedTodo.deadline}
-                                    </div>
-                                )}
+function StakeForm({ form, setForm, selectedTodo, prefilledTodoId, onCancel, onSubmit, isSubmitting }: any) {
+    return (
+        <div className="flex flex-col">
+            <div className="px-6 sm:px-8 py-6 space-y-6 bg-black/[0.015]">
+                {/* Link mode toggle */}
+                <div className="space-y-2">
+                    <Label className="text-[14px] font-bold text-black/80">Link to</Label>
+                    <div className="flex gap-2">
+                        {[
+                            { label: "Existing Todo", value: "existing" as const },
+                            { label: "Create from Scratch", value: "scratch" as const },
+                        ].map((opt) => (
+                            <button
+                                key={opt.value}
+                                onClick={() => setForm({ ...form, linkMode: opt.value, linkedTodoId: opt.value === "existing" ? prefilledTodoId : "" })}
+                                className={`flex-1 py-3 rounded-xl text-[14px] font-bold transition-all border ${form.linkMode === opt.value
+                                    ? `bg-black text-white border-black shadow-md`
+                                    : "bg-white text-black/60 border-black/10 hover:bg-black/5"
+                                    }`}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Existing todo selector */}
+                {form.linkMode === "existing" ? (
+                    <div className="space-y-2">
+                        <Label className="text-[14px] font-bold text-black/80">Select Todo <span className="text-red-500">*</span></Label>
+                        <Select value={form.linkedTodoId} onValueChange={(v) => setForm({ ...form, linkedTodoId: v })}>
+                            <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-12 text-[15px] font-medium shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}>
+                                <SelectValue placeholder="Pick a todo to stake on…" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl border-black/[0.05] shadow-lg">
+                                {MOCK_TODOS.filter(t => t.status === "active").map((t) => (
+                                    <SelectItem key={t.id} value={t.id} className="text-[14px] font-medium py-2.5">
+                                        {t.title}
+                                        {t.hasStake && <span className="ml-2 text-black/40 font-normal">(already staked)</span>}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {selectedTodo && (
+                            <div className="p-4 rounded-xl bg-black/[0.03] border border-black/[0.05] text-[13px] text-black/60 font-medium">
+                                📌 {selectedTodo.description || "No description"} · Due: {selectedTodo.deadline}
                             </div>
-                        ) : (
-                            <>
-                                <div className="space-y-1.5">
-                                    <Label className="text-[13px] font-semibold text-black/70">Title <span className="text-red-500">*</span></Label>
-                                    <Input
-                                        value={form.title}
-                                        onChange={(e) => setForm({ ...form, title: e.target.value })}
-                                        placeholder="e.g. Run 5km every day for 30 days"
-                                        className="rounded-xl border-black/10 h-11 text-[14px] focus-visible:ring-1 focus-visible:ring-black/20"
-                                    />
-                                </div>
-                                <div className="space-y-1.5">
-                                    <Label className="text-[13px] font-semibold text-black/70">Description</Label>
-                                    <Textarea
-                                        value={form.description}
-                                        onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                        placeholder="What are you committing to?"
-                                        className="rounded-xl border-black/10 text-[14px] focus-visible:ring-1 focus-visible:ring-black/20 resize-none min-h-[80px]"
-                                    />
-                                </div>
-                            </>
                         )}
-
-                        {/* Amount */}
-                        <div className="space-y-1.5">
-                            <Label className="text-[13px] font-semibold text-black/70">Stake Amount (USD) <span className="text-red-500">*</span></Label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-black/50 font-semibold text-[15px]">$</span>
-                                <Input
-                                    type="number"
-                                    min="1"
-                                    value={form.amount}
-                                    onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                                    placeholder="50"
-                                    className="pl-7 rounded-xl border-black/10 h-11 text-[14px] focus-visible:ring-1 focus-visible:ring-black/20"
-                                />
-                            </div>
+                    </div>
+                ) : (
+                    <>
+                        <div className="space-y-2">
+                            <Label className="text-[14px] font-bold text-black/80">Title <span className="text-red-500">*</span></Label>
+                            <Input
+                                value={form.title}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, title: e.target.value })}
+                                placeholder="e.g. Run 5km every day for 30 days"
+                                className={`rounded-xl border-black/[0.08] bg-white h-12 text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
+                            />
                         </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-1.5">
-                                <Label className="text-[13px] font-semibold text-black/70">Category</Label>
-                                <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                                    <SelectTrigger className="rounded-xl border-black/10 h-10 text-[13px]">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl">
-                                        {GOAL_CATEGORIES.filter(c => c !== "All").map((c) => (
-                                            <SelectItem key={c} value={c} className="text-[13px]">{c}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-1.5">
-                                <Label className="text-[13px] font-semibold text-black/70">Deadline <span className="text-red-500">*</span></Label>
-                                <Input
-                                    type="date"
-                                    value={form.deadline}
-                                    onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-                                    className="rounded-xl border-black/10 h-10 text-[13px] focus-visible:ring-1 focus-visible:ring-black/20"
-                                />
-                            </div>
+                        <div className="space-y-2">
+                            <Label className="text-[14px] font-bold text-black/80">Description</Label>
+                            <Textarea
+                                value={form.description}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setForm({ ...form, description: e.target.value })}
+                                placeholder="What are you committing to?"
+                                className={`rounded-xl border-black/[0.08] bg-white text-[15px] font-medium placeholder:text-black/30 shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}] resize-none min-h-[100px] p-4`}
+                            />
                         </div>
+                    </>
+                )}
 
-                        {/* Visibility */}
-                        <div className="space-y-1.5">
-                            <Label className="text-[13px] font-semibold text-black/70">Visibility</Label>
-                            <div className="flex gap-2">
-                                {[
-                                    { label: "🌍 Public", value: "public" as const, desc: "Community can see & stake on you" },
-                                    { label: "🔒 Private", value: "private" as const, desc: "Only visible to you" },
-                                ].map((opt) => (
-                                    <button
-                                        key={opt.value}
-                                        onClick={() => setForm({ ...form, visibility: opt.value })}
-                                        className={`flex-1 px-3 py-2.5 rounded-xl text-[12px] font-semibold transition-all border text-left ${form.visibility === opt.value
-                                            ? `border-[${COLORS.primary}] bg-[${COLORS.primary}]/10 text-black`
-                                            : "border-black/10 text-black/50 hover:border-black/30"
-                                            }`}
-                                    >
-                                        <div>{opt.label}</div>
-                                        <div className="text-[11px] font-normal opacity-70 mt-0.5">{opt.desc}</div>
-                                    </button>
+                {/* Amount */}
+                <div className="space-y-2">
+                    <Label className="text-[14px] font-bold text-black/80">Stake Amount (USD) <span className="text-red-500">*</span></Label>
+                    <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40 font-bold text-[18px]">$</span>
+                        <Input
+                            type="number"
+                            min="1"
+                            value={form.amount}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, amount: e.target.value })}
+                            placeholder="50"
+                            className={`pl-10 rounded-xl border-black/[0.08] bg-white h-14 text-[18px] font-bold shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label className="text-[14px] font-bold text-black/80">Category</Label>
+                        <Select value={form.category} onValueChange={(v: string) => setForm({ ...form, category: v })}>
+                            <SelectTrigger className={`rounded-xl border-black/[0.08] bg-white h-14 md:h-12 text-[14px] font-medium shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}]`}>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl border-black/[0.05] shadow-lg">
+                                {GOAL_CATEGORIES.filter(c => c !== "All").map((c) => (
+                                    <SelectItem key={c} value={c} className="text-[14px] font-medium py-2.5">{c}</SelectItem>
                                 ))}
-                            </div>
-                        </div>
+                            </SelectContent>
+                        </Select>
                     </div>
 
-                    <div className={`px-6 pb-6 pt-2 flex flex-col sm:flex-row gap-2 border-t border-black/5 bg-[${COLORS.background}]`}>
-                        <Button
-                            variant="outline"
-                            onClick={() => setShowCreate(false)}
-                            className="flex-1 h-11 rounded-xl border-black/10 text-black/70 font-semibold"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleCreate}
-                            disabled={
-                                isSubmitting ||
-                                !form.deadline ||
-                                !form.amount ||
-                                (form.linkMode === "existing" ? !form.linkedTodoId : !form.title.trim())
-                            }
-                            className={`flex-1 h-11 rounded-xl bg-[${COLORS.primary}] text-black hover:bg-[${COLORS.primaryHover}] font-bold flex items-center justify-center gap-2`}
-                        >
-                            {isSubmitting ? (
-                                <span className="flex items-center gap-2">
-                                    <div className="h-4 w-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
-                                    Locking in…
-                                </span>
-                            ) : (
-                                <>Lock In Stake 🔒 <ArrowRight className="h-4 w-4" /></>
-                            )}
-                        </Button>
+                    {form.linkMode !== "existing" && (
+                        <DateTimePicker
+                            label="Deadline Date & Time *"
+                            date={form.endDate}
+                            setDate={(d) => setForm({ ...form, endDate: d })}
+                            time={form.endTime}
+                            setTime={(t) => setForm({ ...form, endTime: t })}
+                        />
+                    )}
+                </div>
+
+                {/* Visibility */}
+                <div className="space-y-2">
+                    <Label className="text-[14px] font-bold text-black/80">Visibility</Label>
+                    <div className="flex gap-2">
+                        {[
+                            { label: "🌍 Public", value: "public" as const, desc: "Community can see & stake on you" },
+                            { label: "🔒 Private", value: "private" as const, desc: "Only visible to you" },
+                        ].map((opt) => (
+                            <button
+                                key={opt.value}
+                                onClick={() => setForm({ ...form, visibility: opt.value })}
+                                className={`flex-1 px-4 py-3 rounded-xl text-left transition-all border ${form.visibility === opt.value
+                                    ? `bg-[${COLORS.primary}]/10 border-[${COLORS.primary}] text-black shadow-sm`
+                                    : "bg-white border-black/[0.08] text-black/60 hover:bg-black/[0.02]"
+                                    }`}
+                            >
+                                <div className="text-[15px] font-bold mb-0.5">{opt.label}</div>
+                                <div className="text-[12px] font-medium opacity-70 leading-snug">{opt.desc}</div>
+                            </button>
+                        ))}
                     </div>
-                </DialogContent>
-            </Dialog>
+                </div>
+            </div>
+
+            <div className="px-6 sm:px-8 pb-8 pt-4 flex flex-col sm:flex-row gap-3 bg-black/[0.015]">
+                <Button
+                    variant="outline"
+                    onClick={onCancel}
+                    className="flex-1 h-12 rounded-xl border-black/[0.08] bg-white text-black/70 font-bold hover:bg-black/5 hover:text-black transition-colors"
+                >
+                    Cancel
+                </Button>
+                <Button
+                    onClick={onSubmit}
+                    disabled={
+                        isSubmitting ||
+                        !form.amount ||
+                        (form.linkMode === "existing" ? !form.linkedTodoId : (!form.title.trim() || !form.endDate))
+                    }
+                    className={`flex-1 h-12 rounded-xl bg-[${COLORS.primary}] text-black hover:bg-[${COLORS.primaryHover}] font-bold flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 disabled:opacity-50`}
+                >
+                    {isSubmitting ? (
+                        <span className="flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
+                            Locking in…
+                        </span>
+                    ) : (
+                        <>Lock In Stake <ArrowRight className="h-4 w-4 ml-1" /></>
+                    )}
+                </Button>
+            </div>
+        </div>
+    )
+}
+
+function DateTimePicker({ label, date, setDate, time, setTime }: { label: string, date: Date | undefined, setDate: (d: Date | undefined) => void, time: string, setTime: (t: string) => void }) {
+    const isDesktop = useMediaQuery("(min-width: 768px)")
+    const [open, setOpen] = useState(false)
+
+    const CalendarContent = (
+        <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(d) => {
+                setDate(d)
+                if (isDesktop) setOpen(false)
+            }}
+            initialFocus
+            className="p-3 pointer-events-auto flex justify-center"
+        />
+    )
+
+    return (
+        <div className="space-y-2">
+            <Label className="text-[14px] font-bold text-black/80">{label}</Label>
+            <div className="flex gap-2">
+                {isDesktop ? (
+                    <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={`flex-1 justify-start text-left font-medium h-12 rounded-xl border-black/[0.08] shadow-sm hover:bg-black/[0.02] focus:ring-2 focus:ring-[${COLORS.primary}]/50 transition-colors ${!date && "text-black/40"}`}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                                <span className="truncate">{date ? format(date, "PPP") : "Pick date"}</span>
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 rounded-2xl border-black/[0.05] shadow-xl" align="start">
+                            {CalendarContent}
+                        </PopoverContent>
+                    </Popover>
+                ) : (
+                    <Drawer open={open} onOpenChange={setOpen}>
+                        <DrawerTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={`flex-1 justify-start text-left font-bold h-14 rounded-xl border-black/[0.08] shadow-sm hover:bg-black/[0.02] focus:ring-2 focus:ring-[${COLORS.primary}]/50 transition-colors ${!date && "text-black/40"}`}
+                            >
+                                <CalendarIcon className="mr-2 h-5 w-5 shrink-0" />
+                                <span className="truncate text-[15px]">{date ? format(date, "PPP") : "Pick date"}</span>
+                            </Button>
+                        </DrawerTrigger>
+                        <DrawerContent className="bg-white border-t border-black/[0.05] rounded-t-[32px] pb-6">
+                            <DrawerHeader className="text-left px-6 pt-6 pb-2 border-b border-black/[0.03]">
+                                <DrawerTitle className="text-xl font-black text-black tracking-tight flex items-center gap-2">
+                                    <CalendarIcon className="h-5 w-5 text-black/50" /> Select Date
+                                </DrawerTitle>
+                            </DrawerHeader>
+                            <div className="flex justify-center p-4">
+                                {CalendarContent}
+                            </div>
+                            <div className="px-6 mt-2">
+                                <Button
+                                    className={`w-full h-14 rounded-xl bg-black text-white font-bold text-[16px] active:scale-95 transition-transform`}
+                                    onClick={() => setOpen(false)}
+                                >
+                                    Done
+                                </Button>
+                            </div>
+                        </DrawerContent>
+                    </Drawer>
+                )}
+
+                <Input
+                    type="time"
+                    value={time}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTime(e.target.value)}
+                    className={`w-[110px] sm:w-[130px] rounded-xl border-black/[0.08] bg-white ${isDesktop ? 'h-12 text-[14px]' : 'h-14 text-[16px] px-2'} font-bold shadow-sm focus-visible:ring-2 focus-visible:ring-[${COLORS.primary}]/50 focus-visible:border-[${COLORS.primary}] shrink-0`}
+                    aria-label="Time"
+                />
+            </div>
         </div>
     )
 }
